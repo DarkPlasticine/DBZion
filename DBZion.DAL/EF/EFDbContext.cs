@@ -1,15 +1,14 @@
 ﻿using DBZion.DAL.Entities;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
 
 namespace DBZion.DAL.EF
 {
     public class EFDbContext : DbContext
     {
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<User> Users { get; set; }
+
         static EFDbContext()
         {
             Database.SetInitializer<EFDbContext>(new MyEFDbInitializer());

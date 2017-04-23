@@ -15,5 +15,19 @@ namespace DBZion.DAL.Entities
         public string FirstName { get; set; }
 
         public string MiddleName { get; set; }
+
+        public List<Order> Orders;
+
+        public User()
+        {
+
+        }
+
+        public User(string surname, string firstName, string middleName)
+        {
+            Surname = surname;
+            FirstName = firstName;
+            MiddleName = middleName;
+        }
     }
 }

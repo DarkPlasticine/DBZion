@@ -96,5 +96,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DBZion.BLL\DBZion.BLL.csproj">
+      <Project>{94c9142f-4af5-4c61-8309-500c5a0d86bb}</Project>
+      <Name>DBZion.BLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DBZion.DAL\DBZion.DAL.csproj">
+      <Project>{1edcd428-a2e7-454a-bddb-a96c9bc0d9f7}</Project>
+      <Name>DBZion.DAL</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

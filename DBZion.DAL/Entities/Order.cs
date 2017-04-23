@@ -17,7 +17,7 @@ namespace DBZion.DAL.Entities
         public int Price { get; set; }
 
         public int? UserID;
-        public User user;
+        public User User;
 
         public DateTime OrderDate { get; set; }
 
@@ -26,6 +26,11 @@ namespace DBZion.DAL.Entities
         public string Note { get; set; }
 
         public Order()
+        {
+
+        }
+
+        public Order(string serviceType, int price, User user, DateTime orderDate, string description, string note)
         {
 
         }
