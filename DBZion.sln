@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBZion", "DBZion\DBZion.csproj", "{ADD28B7A-6DD6-4995-A31B-B4DC7AAFE9AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBZion.DAL", "DBZion.DAL\DBZion.DAL.csproj", "{1EDCD428-A2E7-454A-BDDB-A96C9BC0D9F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBZion.BLL", "DBZion.BLL\DBZion.BLL.csproj", "{94C9142F-4AF5-4C61-8309-500C5A0D86BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{ADD28B7A-6DD6-4995-A31B-B4DC7AAFE9AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADD28B7A-6DD6-4995-A31B-B4DC7AAFE9AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADD28B7A-6DD6-4995-A31B-B4DC7AAFE9AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EDCD428-A2E7-454A-BDDB-A96C9BC0D9F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EDCD428-A2E7-454A-BDDB-A96C9BC0D9F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EDCD428-A2E7-454A-BDDB-A96C9BC0D9F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EDCD428-A2E7-454A-BDDB-A96C9BC0D9F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94C9142F-4AF5-4C61-8309-500C5A0D86BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94C9142F-4AF5-4C61-8309-500C5A0D86BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94C9142F-4AF5-4C61-8309-500C5A0D86BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94C9142F-4AF5-4C61-8309-500C5A0D86BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
