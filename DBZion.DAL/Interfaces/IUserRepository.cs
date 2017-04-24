@@ -31,5 +31,9 @@ namespace DBZion.DAL.Interfaces
         Task<User> FindByIdAsync(int id);
 
         List<Order> GetUserOrders(User user);
+
+        List<X> GetPropValues<X>(Func<User, bool> predicate, Func<User, X> selector);
+
+        Task<List<X>> GetPropValuesAsync<X>(Expression<Func<User, bool>> predicate, Expression<Func<User, X>> selector);
     }
 }

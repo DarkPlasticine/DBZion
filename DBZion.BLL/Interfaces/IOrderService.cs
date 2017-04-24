@@ -11,6 +11,8 @@ namespace DBZion.BLL.Interfaces
         void AddOrder(string userSurname, string userFirstName, string userMiddleName, string phoneNumber, string serviceType, int price, DateTime orderDate, string description, string note);
         List<Order> GetOrders();
         List<Order> GetOrders(Func<Order, bool> predicate);
+        List<X> GetFieldValues<X>(Func<Order, X> selector);
+        Task<List<X>> GetFieldValuesAsync<X>(Expression<Func<Order, X>> selector);
         Task<List<Order>> GetOrdersAsync();
         Task<List<Order>> GetOrdersAsync(Expression<Func<Order, bool>> predicate);
 
@@ -23,6 +25,8 @@ namespace DBZion.BLL.Interfaces
         Task<List<User>> FindUsersBySurnameAsync(string surname);
         List<User> GetAllUsers();
         Task<List<User>> GetAllUsersAsync();
+        List<string> GetAllUsersToList(string surname);
+        Task<List<string>> GetAllUsersToListAsync(string surname);
         List<Order> GetUserOrders(User user);
     }
 }

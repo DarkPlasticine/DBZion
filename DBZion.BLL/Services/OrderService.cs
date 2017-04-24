@@ -26,7 +26,7 @@ namespace DBZion.BLL.Services
 
         #region Работа с заказами
 
-        public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, 
+        public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber,
                              string serviceType, int price, DateTime orderDate, string description, string note)
         {
             try
@@ -38,10 +38,34 @@ namespace DBZion.BLL.Services
                 db.Orders.Add(order);
                 db.Save();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("Ошибка при добавлении заказа \n" + ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Возвращает уникальные значения для выбранного поля.
+        /// Использование: var serviceTypes = GetFieldValues(p => p.ServiceType);
+        /// </summary>
+        /// <typeparam name="X"></typeparam>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public List<X> GetFieldValues<X>(Func<Order, X> selector)
+        {
+            return db.Orders.GetPropValues(selector);
+        }
+
+        /// <summary>
+        /// Возвращает уникальные значения для выбранного поля.
+        /// Использование: var serviceTypes = await GetFieldValuesAsync(p => p.ServiceType);
+        /// </summary>
+        /// <typeparam name="X"></typeparam>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public async Task<List<X>> GetFieldValuesAsync<X>(Expression<Func<Order, X>> selector)
+        {
+            return await db.Orders.GetPropValuesAsync(selector);
         }
 
         /// <summary>
@@ -55,7 +79,7 @@ namespace DBZion.BLL.Services
 
         /// <summary>
         /// Возвращает список заказов по определенному условию.
-        /// Использование var orders = GetOrders(p => p.ServiceType == "Ремонт");
+        /// Использование: var orders = GetOrders(p => p.ServiceType == "Ремонт");
         /// </summary>
         /// <param name="predicate">Условие.</param>
         /// <returns></returns>
@@ -75,7 +99,7 @@ namespace DBZion.BLL.Services
 
         /// <summary>
         /// Возвращает список заказов по определенному условию.
-        /// Использование: var orders = GetOrders(p => p.ServiceType == "Ремонт");
+        /// Использование: var orders = await GetOrdersAsync(p => p.ServiceType == "Ремонт");
         /// </summary>
         /// <param name="predicate">Условие.</param>
         /// <returns></returns>
@@ -120,6 +144,11 @@ namespace DBZion.BLL.Services
             return db.Users.FindById(id);
         }
 
+        /// <summary>
+        /// Находит пользователя по ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<User> FindUserAsync(int id)
         {
             return await db.Users.FindByIdAsync(id);
@@ -138,11 +167,11 @@ namespace DBZion.BLL.Services
 
         /// <summary>
         /// Находит пользователя по определенному условию.
-        /// Использование: var user = FindUserAsync(p => p.Surname == "Иванов" && p.MiddleName == "Иванович");
+        /// Использование: var user = await FindUserAsync(p => p.Surname == "Иванов" && p.MiddleName == "Иванович");
         /// </summary>
         /// <param name="predicate"></param>
         /// <returns></returns>
-        public async Task< User> FindUserAsync(Expression<Func<User, bool>> predicate)
+        public async Task<User> FindUserAsync(Expression<Func<User, bool>> predicate)
         {
             return await db.Users.GetUserAsync(predicate);
         }
@@ -167,16 +196,49 @@ namespace DBZion.BLL.Services
             return await db.Users.GetAllAsync(p => p.Surname.Contains(surname));
         }
 
+        /// <summary>
+        /// Возвращает список всех пользователей.
+        /// </summary>
+        /// <returns></returns>
         public List<User> GetAllUsers()
         {
             return db.Users.GetAll();
         }
 
+        /// <summary>
+        /// Возвращает список всех пользователей.
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<User>> GetAllUsersAsync()
         {
             return await db.Users.GetAllAsync();
         }
 
+        /// <summary>
+        /// Возвращает список всех пользователей в формате "Фамилия Имя Отчество".
+        /// </summary>
+        /// <param name="surname"></param>
+        /// <returns></returns>
+        public List<string> GetAllUsersToList(string surname)
+        {
+            return db.Users.GetPropValues(p => p.Surname.Contains(surname), p => p.FullName);
+        }
+
+        /// <summary>
+        /// Возвращает список всех пользователей в формате "Фамилия Имя Отчество".
+        /// </summary>
+        /// <param name="surname"></param>
+        /// <returns></returns>
+        public async Task<List<string>> GetAllUsersToListAsync(string surname)
+        {
+            return await db.Users.GetPropValuesAsync(p => p.Surname.Contains(surname), p => p.FullName);
+        }
+
+        /// <summary>
+        /// Возвращает список всех заказов пользователя.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public List<Order> GetUserOrders(User user)
         {
             return db.Users.GetUserOrders(user);

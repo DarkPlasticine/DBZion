@@ -54,7 +54,7 @@ namespace DBZion.DAL.Repositories
             return db.Orders.Include(p => p.User).Where(predicate).ToList();
         }
 
-        public async Task< List<Order>> GetAllAsync()
+        public async Task<List<Order>> GetAllAsync()
         {
             return await db.Orders.Include(p => p.User).ToListAsync();
         }
@@ -62,6 +62,16 @@ namespace DBZion.DAL.Repositories
         public async Task<List<Order>> GetAllAsync(Expression<Func<Order, bool>> predicate)
         {
             return await db.Orders.Include(p => p.User).ToListAsync();
+        }
+
+        public List<X> GetPropValues<X>(Func<Order, X> selector)
+        {
+            return db.Orders.Select(selector).Distinct().ToList();
+        }
+
+        public async Task<List<X>> GetPropValuesAsync<X>(Expression<Func<Order, X>> selector)
+        {
+            return await db.Orders.Select(selector).Distinct().ToListAsync();
         }
     }
 }

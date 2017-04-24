@@ -78,5 +78,15 @@ namespace DBZion.DAL.Repositories
         {
             return db.Users.Include(p => p.Orders).Where(p => p.UserID == user.UserID).FirstOrDefault().Orders;
         }
+
+        public List<X> GetPropValues<X>(Func<User, bool> predicate, Func<User, X> selector)
+        {
+            return db.Users.Where(predicate).Select(selector).Distinct().ToList();
+        }
+
+        public async Task<List<X>> GetPropValuesAsync<X>(Expression<Func<User, bool>> predicate, Expression<Func<User, X>> selector)
+        {
+            return await db.Users.Where(predicate).Select(selector).Distinct().ToListAsync();
+        }
     }
 }
