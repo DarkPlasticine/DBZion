@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace DBZion.DAL.Entities
 {
@@ -16,6 +12,8 @@ namespace DBZion.DAL.Entities
 
         public string MiddleName { get; set; }
 
+        public string PhoneNumber { get; set; }
+
         public List<Order> Orders;
 
         public User()
@@ -23,11 +21,20 @@ namespace DBZion.DAL.Entities
 
         }
 
-        public User(string surname, string firstName, string middleName)
+        public User(string surname, string firstName, string middleName, string phoneNumber)
         {
             Surname = surname;
             FirstName = firstName;
             MiddleName = middleName;
+            PhoneNumber = phoneNumber;
+        }
+
+        public string FullName
+        {
+            get
+            {
+                return $"{Surname} {FirstName} {MiddleName}";
+            }
         }
     }
 }

@@ -1,8 +1,7 @@
 ﻿using DBZion.DAL.Entities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DBZion.DAL.Interfaces
@@ -14,6 +13,14 @@ namespace DBZion.DAL.Interfaces
         void Update(User user);
 
         void Delete(User user);
+
+        List<User> GetAll();
+
+        List<User> GetAll(Func<User, bool> predicate);
+
+        Task<List<User>> GetAllAsync();
+
+        Task<List<User>> GetAllAsync(Expression<Func<User, bool>> predicate);
 
         User FindById(int id);
 

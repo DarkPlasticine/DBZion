@@ -1,11 +1,11 @@
 ﻿using DBZion.DAL.EF;
 using DBZion.DAL.Entities;
 using DBZion.DAL.Interfaces;
-using System.Data.Entity;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Text;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DBZion.DAL.Repositories
@@ -42,6 +42,26 @@ namespace DBZion.DAL.Repositories
         public async Task<User> FindByIdAsync(int id)
         {
             return await db.Users.FindAsync(id);
+        }
+
+        public List<User> GetAll()
+        {
+            return db.Users.ToList();
+        }
+
+        public List<User> GetAll(Func<User, bool> predicate)
+        {
+            return db.Users.Where(predicate).ToList();
+        }
+
+        public async Task<List<User>> GetAllAsync()
+        {
+            return await db.Users.ToListAsync();
+        }
+
+        public async Task<List<User>> GetAllAsync(Expression<Func<User, bool>> predicate)
+        {
+            return await db.Users.Where(predicate).ToListAsync();
         }
 
         public List<Order> GetUserOrders(User user)

@@ -1,13 +1,12 @@
-﻿using DBZion.DAL.Interfaces;
+﻿using DBZion.DAL.EF;
+using DBZion.DAL.Entities;
+using DBZion.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DBZion.DAL.Entities;
-using System.Linq.Expressions;
 using System.Data.Entity;
-using DBZion.DAL.EF;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace DBZion.DAL.Repositories
 {
