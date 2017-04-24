@@ -29,6 +29,9 @@ namespace DBZion.DAL.Entities
             PhoneNumber = phoneNumber;
         }
 
+        /// <summary>
+        /// Возвращает полное имя пользователя в формате "Фамилия Имя Отчество".
+        /// </summary>
         public string FullName
         {
             get

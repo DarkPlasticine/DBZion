@@ -64,6 +64,16 @@ namespace DBZion.DAL.Repositories
             return await db.Users.Where(predicate).ToListAsync();
         }
 
+        public User GetUser(Func<User, bool> predicate)
+        {
+            return db.Users.Where(predicate).FirstOrDefault();
+        }
+
+        public async Task<User> GetUserAsync(Expression<Func<User, bool>> predicate)
+        {
+            return await db.Users.Where(predicate).FirstOrDefaultAsync();
+        }
+
         public List<Order> GetUserOrders(User user)
         {
             return db.Users.Include(p => p.Orders).Where(p => p.UserID == user.UserID).FirstOrDefault().Orders;

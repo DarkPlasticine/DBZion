@@ -22,6 +22,10 @@ namespace DBZion.DAL.Interfaces
 
         Task<List<User>> GetAllAsync(Expression<Func<User, bool>> predicate);
 
+        User GetUser(Func<User, bool> predicate);
+
+        Task<User> GetUserAsync(Expression<Func<User, bool>> predicate);
+
         User FindById(int id);
 
         Task<User> FindByIdAsync(int id);
