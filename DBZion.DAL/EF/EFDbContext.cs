@@ -1,15 +1,14 @@
 ﻿using DBZion.DAL.Entities;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Text;
 
 namespace DBZion.DAL.EF
 {
     public class EFDbContext : DbContext
     {
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<User> Users { get; set; }
+
         static EFDbContext()
         {
             Database.SetInitializer<EFDbContext>(new MyEFDbInitializer());
@@ -18,12 +17,21 @@ namespace DBZion.DAL.EF
         public EFDbContext(string connectionString)
             :base(connectionString)
         {
-
+            
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+        }
+
+        private void FixEfProviderServicesProblem()
+        {
+            // The Entity Framework provider type 'System.Data.Entity.SqlServer.SqlProviderServices, EntityFramework.SqlServer'
+            // for the 'System.Data.SqlClient' ADO.NET provider could not be loaded. 
+            // Make sure the provider assembly is available to the running application. 
+            // See http://go.microsoft.com/fwlink/?LinkId=260882 for more information.
+            var instance = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
         }
     }
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace DBZion.DAL.Entities
 {
@@ -15,5 +11,33 @@ namespace DBZion.DAL.Entities
         public string FirstName { get; set; }
 
         public string MiddleName { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public List<Order> Orders;
+
+        public User()
+        {
+
+        }
+
+        public User(string surname, string firstName, string middleName, string phoneNumber)
+        {
+            Surname = surname;
+            FirstName = firstName;
+            MiddleName = middleName;
+            PhoneNumber = phoneNumber;
+        }
+
+        /// <summary>
+        /// Возвращает полное имя пользователя в формате "Фамилия Имя Отчество".
+        /// </summary>
+        public string FullName
+        {
+            get
+            {
+                return $"{Surname} {FirstName} {MiddleName}";
+            }
+        }
     }
 }
