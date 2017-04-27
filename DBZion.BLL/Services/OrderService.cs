@@ -34,8 +34,9 @@ namespace DBZion.BLL.Services
                 User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
                 if (user == null)
                 {
-                    AddUser(userSurname, userFirstName, userMiddleName, userPhoneNumber);
-                    user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
+                    //AddUser(userSurname, userFirstName, userMiddleName, userPhoneNumber);
+                    //user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
+                    user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
                 }
                 Order order = new Order(AvailableReceiptId(), serviceType, price, orderDate, description, note, isReady, call, user);
                 db.Orders.Add(order);
