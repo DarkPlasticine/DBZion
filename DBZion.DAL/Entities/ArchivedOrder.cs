@@ -22,12 +22,6 @@ namespace DBZion.DAL.Entities
 
         public string Note { get; set; }
 
-        public bool IsActive { get; set; }
-
-        public bool IsReady { get; set; }
-
-        public bool Call { get; set; }
-
         public int? UserID { get; set; }
         public User User { get; set; }
 
