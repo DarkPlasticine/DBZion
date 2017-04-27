@@ -30,8 +30,10 @@ namespace DBZion.Tests
             DateTime orderDate = DateTime.Now;
             string description = "123";
             string note = "123";
+            bool isReady = false;
+            bool call = false;
 
-            service.AddOrder(surname, firstName, middleName, phoneNumber, serviceType, price, orderDate, description, note);
+            service.AddOrder(surname, firstName, middleName, phoneNumber, serviceType, price, orderDate, description, note, isReady, call);
 
 
             int ordersCountAfter = service.GetOrders().Count;

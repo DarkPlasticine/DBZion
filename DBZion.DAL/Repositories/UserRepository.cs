@@ -76,7 +76,7 @@ namespace DBZion.DAL.Repositories
 
         public List<Order> GetUserOrders(User user)
         {
-            return db.Users.Include(p => p.Orders).Where(p => p.UserID == user.UserID).FirstOrDefault().Orders;
+            return db.Users.Include(p => p.Orders).Where(p => p.UserID == user.UserID).FirstOrDefault().Orders.ToList();
         }
 
         public List<X> GetPropValues<X>(Func<User, bool> predicate, Func<User, X> selector)

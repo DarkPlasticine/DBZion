@@ -27,14 +27,17 @@ namespace DBZion.BLL.Services
         #region Работа с заказами
 
         public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber,
-                             string serviceType, int price, DateTime orderDate, string description, string note)
+                             string serviceType, int price, DateTime orderDate, string description, string note, bool isReady, bool call)
         {
             try
             {
                 User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
-                if (user != null)
+                if (user == null)
+                {
                     AddUser(userSurname, userFirstName, userMiddleName, userPhoneNumber);
-                Order order = new Order(serviceType, price, orderDate, description, note, user);
+                    user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
+                }
+                Order order = new Order(AvailableReceiptId(), serviceType, price, orderDate, description, note, isReady, call, user);
                 db.Orders.Add(order);
                 db.Save();
             }
@@ -215,33 +218,35 @@ namespace DBZion.BLL.Services
         }
 
         /// <summary>
-        /// Возвращает список всех пользователей в формате "Фамилия Имя Отчество".
-        /// </summary>
-        /// <param name="surname"></param>
-        /// <returns></returns>
-        public List<string> GetAllUsersToList(string surname)
-        {
-            return db.Users.GetPropValues(p => p.Surname.Contains(surname), p => p.FullName);
-        }
-
-        /// <summary>
-        /// Возвращает список всех пользователей в формате "Фамилия Имя Отчество".
-        /// </summary>
-        /// <param name="surname"></param>
-        /// <returns></returns>
-        public async Task<List<string>> GetAllUsersToListAsync(string surname)
-        {
-            return await db.Users.GetPropValuesAsync(p => p.Surname.Contains(surname), p => p.FullName);
-        }
-
-        /// <summary>
         /// Возвращает список всех заказов пользователя.
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
         public List<Order> GetUserOrders(User user)
         {
-            return db.Users.GetUserOrders(user);
+            return db.Users.GetUserOrders(user).ToList();
+        }
+
+        #endregion
+
+        #region Вспомогательные методы
+
+        /// <summary>
+        /// Получает первый свободный номер для Order.ReceiptId
+        /// </summary>
+        /// <returns></returns>
+        private int AvailableReceiptId()
+        {
+            //получаем все ReceiptId из БД
+            List<int> receiptIDS = db.Orders.GetPropValues(p => p.ReceiptId);
+
+            for (int i = 1; i < int.MaxValue; i++)
+            {
+                if (!receiptIDS.Contains(i))
+                    return i;
+            }
+
+            return 0;
         }
 
         #endregion
