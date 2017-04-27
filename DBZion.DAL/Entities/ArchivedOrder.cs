@@ -4,26 +4,20 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DBZion.DAL.Entities
 {
-    public class Order
+    [Table("Archive")]
+    public class ArchivedOrder
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int OrderId { get; set; }
 
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ReceiptId { get; set; }
 
-        [Required]
-        [StringLength(20)]
         public string ServiceType { get; set; }
 
-        [Required]
-        [Range(1, 999999)]
         public int Price { get; set; }
 
         public DateTime OrderDate { get; set; }
 
-        [Required]
         public string Description { get; set; }
 
         public string Note { get; set; }
@@ -37,15 +31,12 @@ namespace DBZion.DAL.Entities
         public int? UserID { get; set; }
         public User User { get; set; }
 
-        [Timestamp]
-        public byte[] RowVersion { get; set; }
-
-        public Order()
+        public ArchivedOrder()
         {
-            RowVersion = new byte[8] { 1, 2, 3, 4, 5, 6, 7, 8 };
+
         }
 
-        public Order(int receiptId, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, User user)
+        public ArchivedOrder(int receiptId, string serviceType, int price, DateTime orderDate, string description, string note, User user)
         {
             ReceiptId = receiptId;
             ServiceType = serviceType;
@@ -53,11 +44,7 @@ namespace DBZion.DAL.Entities
             OrderDate = orderDate;
             Description = description;
             Note = note;
-            IsActive = isActive;
-            IsReady = isReady;
-            Call = call;
             User = user;
-            RowVersion = new byte[8] { 1, 2, 3, 4, 5, 6, 7, 8 };
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Entity.Infrastructure;
 
 namespace DBZion.BLL.Services
 {
@@ -27,24 +28,38 @@ namespace DBZion.BLL.Services
         #region Работа с заказами
 
         public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber,
-                             string serviceType, int price, DateTime orderDate, string description, string note, bool isReady, bool call)
+                             string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call)
         {
             try
             {
                 User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
                 if (user == null)
                 {
-                    //AddUser(userSurname, userFirstName, userMiddleName, userPhoneNumber);
-                    //user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
                     user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
                 }
-                Order order = new Order(AvailableReceiptId(), serviceType, price, orderDate, description, note, isReady, call, user);
+                Order order = new Order(AvailableReceiptId(), serviceType, price, orderDate, description, note, isActive, isReady, call, user);
                 db.Orders.Add(order);
                 db.Save();
             }
             catch (Exception ex)
             {
                 throw new Exception("Ошибка при добавлении заказа \n" + ex.Message);
+            }
+        }
+
+        public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string phoneNumber, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call)
+        {
+            try
+            {
+                Order order = db.Orders.FindById(id);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw new Exception("Данный заказ ранее уже был изменен.");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ошибка при обновлении заказа \n" + ex.Message);
             }
         }
 

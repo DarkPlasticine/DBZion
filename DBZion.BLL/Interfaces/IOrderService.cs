@@ -8,7 +8,8 @@ namespace DBZion.BLL.Interfaces
 {
     public interface IOrderService
     {
-        void AddOrder(string userSurname, string userFirstName, string userMiddleName, string phoneNumber, string serviceType, int price, DateTime orderDate, string description, string note, bool isReady, bool call);
+        void AddOrder(string userSurname, string userFirstName, string userMiddleName, string phoneNumber, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call);
+        void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string phoneNumber, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call);
         List<Order> GetOrders();
         List<Order> GetOrders(Func<Order, bool> predicate);
         List<X> GetFieldValues<X>(Func<Order, X> selector);
@@ -26,5 +27,7 @@ namespace DBZion.BLL.Interfaces
         List<User> GetAllUsers();
         Task<List<User>> GetAllUsersAsync();
         List<Order> GetUserOrders(User user);
+
+
     }
 }

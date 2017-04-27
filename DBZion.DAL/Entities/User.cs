@@ -8,7 +8,7 @@ namespace DBZion.DAL.Entities
     {
         [Key]
         public int UserID { get; set; }
-        
+
         [Required]
         public string Surname { get; set; }
 
@@ -21,10 +21,14 @@ namespace DBZion.DAL.Entities
         [Required]
         public string PhoneNumber { get; set; }
 
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
+
         public ICollection<Order> Orders { get; set; }
 
         public User()
         {
+            RowVersion = new byte[8] { 1, 2, 3, 4, 5, 6, 7, 8 };
             Orders = new List<Order>();
         }
 
@@ -34,6 +38,7 @@ namespace DBZion.DAL.Entities
             FirstName = firstName;
             MiddleName = middleName;
             PhoneNumber = phoneNumber;
+            RowVersion = new byte[8] { 1, 2, 3, 4, 5, 6, 7, 8 };
             Orders = new List<Order>();
         }
 

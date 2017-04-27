@@ -6,6 +6,7 @@ namespace DBZion.DAL.EF
 {
     public class EFDbContext : DbContext
     {
+        public DbSet<ArchivedOrder> Archive { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<User> Users { get; set; }
 
