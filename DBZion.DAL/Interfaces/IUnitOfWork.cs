@@ -10,6 +10,8 @@ namespace DBZion.DAL.Interfaces
 
         IUserRepository Users { get; }
 
+        System.Data.Entity.Database Database { get; }
+
         void Save();
     }
 }

@@ -46,6 +46,14 @@ namespace DBZion.DAL.Repositories
             }
         }
 
+        public System.Data.Entity.Database Database
+        {
+            get
+            {
+                return db.Database;
+            }
+        }
+
         public void Save()
         {
             db.SaveChanges();

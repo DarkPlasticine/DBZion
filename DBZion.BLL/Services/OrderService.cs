@@ -4,11 +4,10 @@ using DBZion.DAL.Interfaces;
 using DBZion.DAL.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
-using System.Data.Entity.Infrastructure;
 
 namespace DBZion.BLL.Services
 {
@@ -27,35 +26,56 @@ namespace DBZion.BLL.Services
 
         #region Работа с заказами
 
+        // Добавление нового заказа в базу данных.
         public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber,
                              string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call)
         {
-            try
+            using (var transaction = db.Database.BeginTransaction())
             {
-                User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
-                if (user == null)
+                try
                 {
-                    user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
+                    User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
+                    if (user == null)
+                        user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
+                    Order order = new Order(AvailableReceiptId(), serviceType, price, orderDate, description, note, isActive, isReady, call, user);
+                    db.Orders.Add(order);
+                    db.Save();
+                    transaction.Commit();
                 }
-                Order order = new Order(AvailableReceiptId(), serviceType, price, orderDate, description, note, isActive, isReady, call, user);
-                db.Orders.Add(order);
-                db.Save();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Ошибка при добавлении заказа \n" + ex.Message);
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Ошибка при добавлении заказа \n" + ex.Message);
+                }
             }
         }
 
-        public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string phoneNumber, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call)
+        // Обновление заказа в базе данных.
+        public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber,
+                                string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call)
         {
             try
             {
                 Order order = db.Orders.FindById(id);
+                User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
+                if (user == null)
+                    user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
+                order.ServiceType = serviceType;
+                order.Price = price;
+                order.OrderDate = orderDate;
+                order.Description = description;
+                order.Note = note;
+                order.IsActive = isActive;
+                order.IsReady = isReady;
+                order.Call = call;
+                order.User = user;
+
+                db.Orders.Update(order);
+                db.Save();
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                throw new Exception("Данный заказ ранее уже был изменен.");
+                throw new Exception("Данный заказ ранее уже был изменен. \n" + ex.Message);
             }
             catch (Exception ex)
             {
@@ -241,6 +261,82 @@ namespace DBZion.BLL.Services
         public List<Order> GetUserOrders(User user)
         {
             return db.Users.GetUserOrders(user).ToList();
+        }
+
+        #endregion
+
+        #region Работа с архивом
+
+        /// <summary>
+        /// Переносит выбранный заказ в архив.
+        /// </summary>
+        /// <param name="id">ID архивируемого заказа.</param>
+        public void AddOrderToArchive(int id)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    Order order = db.Orders.FindById(id);
+                    ArchivedOrder archivedOrder = new ArchivedOrder(order.ReceiptId, order.ServiceType, order.Price, order.OrderDate, order.Description, order.Note, order.User);
+
+                    db.Orders.Delete(order);
+                    db.Archive.Add(archivedOrder);
+
+                    db.Save();
+                    transaction.Commit();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Данный заказ уже ранее был изменен. \n" + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Ошибка при удалении заказа в архив. \n" + ex.Message);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Возвращает все заказы, находящиеся в архиве.
+        /// </summary>
+        /// <returns></returns>
+        public List<ArchivedOrder> GetArchivedOrders()
+        {
+            return db.Archive.GetAll();
+        }
+
+        /// <summary>
+        /// Возвращает все заказы, находящиеся в архиве и удовлетворяющие определенному условию.
+        /// Использование: var orders = GetArchivedOrders(p => p.ReceiptId == 48);
+        /// </summary>
+        /// <param name="predicate">Условие</param>
+        /// <returns></returns>
+        public List<ArchivedOrder> GetArchivedOrders(Func<ArchivedOrder, bool> predicate)
+        {
+            return db.Archive.GetAll(predicate);
+        }
+
+        /// <summary>
+        /// Возвращает все заказы, находящиеся в архиве.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<ArchivedOrder>> GetArchivedOrdersAsync()
+        {
+            return await db.Archive.GetAllAsync();
+        }
+
+        /// <summary>
+        /// Возвращает все заказы, находящиеся в архиве и удовлетворяющие определенному условию.
+        /// Использование: var orders = await GetArchivedOrdersAsync(p => p.ReceiptId == 48);
+        /// </summary>
+        /// <param name="predicate">Условие</param>
+        /// <returns></returns>
+        public async Task<List<ArchivedOrder>> GetArchivedOrdersAsync(Expression<Func<ArchivedOrder, bool>> predicate)
+        {
+            return await db.Archive.GetAllAsync(predicate);
         }
 
         #endregion

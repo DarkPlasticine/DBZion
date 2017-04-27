@@ -7,10 +7,8 @@ namespace DBZion.DAL.Entities
     public class Order
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int OrderId { get; set; }
 
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ReceiptId { get; set; }
 
         [Required]

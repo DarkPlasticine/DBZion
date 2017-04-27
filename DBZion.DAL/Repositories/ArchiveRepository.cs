@@ -26,22 +26,22 @@ namespace DBZion.DAL.Repositories
 
         public List<ArchivedOrder> GetAll()
         {
-            return db.Archive.ToList();
+            return db.Archive.Include(p => p.User).AsNoTracking().ToList();
         }
 
         public List<ArchivedOrder> GetAll(Func<ArchivedOrder, bool> predicate)
         {
-            return db.Archive.Where(predicate).ToList();
+            return db.Archive.Include(p => p.User).AsNoTracking().Where(predicate).ToList();
         }
 
         public async Task<List<ArchivedOrder>> GetAllAsync()
         {
-            return await db.Archive.ToListAsync();
+            return await db.Archive.Include(p => p.User).AsNoTracking().ToListAsync();
         }
 
         public async Task<List<ArchivedOrder>> GetAllAsync(Expression<Func<ArchivedOrder, bool>> predicate)
         {
-            return await db.Archive.Where(predicate).ToListAsync();
+            return await db.Archive.Include(p => p.User).AsNoTracking().Where(predicate).ToListAsync();
         }
     }
 }
