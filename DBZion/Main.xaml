@@ -1,0 +1,112 @@
+﻿<metro:MetroWindow x:Class="DBZion.Main"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:DBZion"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        BorderThickness="1"
+        GlowBrush="{DynamicResource AccentColorBrush}"
+        WindowStartupLocation="CenterScreen"
+        Icon="zion_icon.ico" 
+        Title="ZION" MinHeight="500" MinWidth="850" Closing="MetroWindow_Closing">
+    <Grid>
+        <DockPanel>
+            <material:ColorZone Padding="16" material:ShadowAssist.ShadowDepth="Depth2"
+                                Mode="PrimaryMid" DockPanel.Dock="Top">
+                <!-- Верхняя строка -->
+                <DockPanel>
+                    <!-- Создать квитанцию -->
+                    <Button Style="{StaticResource MaterialDesignRaisedDarkButton}" x:Name="buttonAdd" Margin="0 0 16 0" Click="buttonAdd_Click">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <material:PackIcon Kind="PlaylistPlus" VerticalAlignment="Center" Margin="0 0 8 0" Width="20" Height="20"/>
+                                <TextBlock Text="Создать квитанцию"/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                    <!-- Активные квитанции -->
+                    <Button Style="{StaticResource MaterialDesignRaisedDarkButton}" x:Name="buttonActivity" Margin="0 0 16 0" Click="btnSearch_Click">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <material:PackIcon Kind="Table" VerticalAlignment="Center" Margin="0 0 8 0" Width="20" Height="20"/>
+                                <TextBlock Text="Активные"/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                    <!-- Хроника -->
+                    <Button Style="{StaticResource MaterialDesignRaisedDarkButton}" x:Name="buttonChronicle" Margin="0 0 16 0">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <material:PackIcon Kind="CalendarClock" VerticalAlignment="Center" Margin="0 0 8 0" Width="20" Height="20"/>
+                                <TextBlock Text="Хроника"/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                    <!-- Архив -->
+                    <Button Style="{StaticResource MaterialDesignRaisedDarkButton}" x:Name="buttonArchive" Click="buttonArchive_Click">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <material:PackIcon Kind="Archive" VerticalAlignment="Center" Margin="0 0 8 0" Width="20" Height="20"/>
+                                <TextBlock Text="Архив"/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                    <!-- Поиск -->
+                    <material:ColorZone Mode="Standard" Padding="8 4 8 4" CornerRadius="2" Panel.ZIndex="1"
+                                        Margin="16 0 0 0"
+                                        material:ShadowAssist.ShadowDepth="Depth1"
+                                        DockPanel.Dock="Right">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Button Style="{DynamicResource MaterialDesignToolButton}">
+                                <material:PackIcon Kind="Magnify" Opacity=".56" />
+                            </Button>
+                            <TextBox Grid.Column="1" Margin="8 0 0 0" material:HintAssist.Hint="Поиск" 
+                                     material:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0"
+                                     MinWidth="200" VerticalAlignment="Center" />
+                            <Button Style="{DynamicResource MaterialDesignToolButton}" Grid.Column="2" x:Name="btnSearch" Click="btnSearch_Click">
+                                <material:PackIcon Kind="Tune" Opacity=".56" Margin="8 0 0 0" />
+                            </Button>
+                        </Grid>
+                    </material:ColorZone>
+                </DockPanel>
+            </material:ColorZone>
+            <!-- Отображение бд -->
+            <DataGrid ItemsSource="{Binding}" CanUserSortColumns="True" CanUserAddRows="False"
+                      AutoGenerateColumns="False" material:DataGridAssist.CellPadding="13 8 8 8"
+                      material:DataGridAssist.ColumnHeaderPadding="8">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Удалить" x:Name="menuDelete">
+                            <MenuItem.Icon>
+                                <material:PackIcon Kind="Delete"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                    <material:MaterialDataGridTextColumn Binding="{Binding Number}" Header="№" />
+                    <material:MaterialDataGridTextColumn Binding="{Binding Vid}" Header="Вид обслуживания"/>
+                    <material:MaterialDataGridTextColumn Binding="{Binding Summ}" Header="Сумма" />
+                    <material:MaterialDataGridTextColumn Binding="{Binding FullName}" Header="ФИО" />
+                    <material:MaterialDataGridTextColumn Binding="{Binding Date, StringFormat=\{0:dd.MM.yy HH:mm:ss\}}" Header="Дата" />
+                    <material:MaterialDataGridTextColumn Binding="{Binding Phone, StringFormat={}{0:8(###)###-####}}" Header="Телефон" />
+                    <material:MaterialDataGridTextColumn Binding="{Binding Description}" Header="Описание" />
+                    <material:MaterialDataGridTextColumn Binding="{Binding Comment}" Header="Комментарии" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+    </Grid>
+</metro:MetroWindow>
