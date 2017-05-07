@@ -9,6 +9,7 @@ namespace DBZion.DAL.Entities
         [Key]
         public int OrderId { get; set; }
 
+        [Required]
         public int ReceiptId { get; set; }
 
         [Required]
@@ -19,6 +20,7 @@ namespace DBZion.DAL.Entities
         [Range(1, 999999)]
         public int Price { get; set; }
 
+        [Required]
         public DateTime OrderDate { get; set; }
 
         [Required]
@@ -26,14 +28,20 @@ namespace DBZion.DAL.Entities
 
         public string Note { get; set; }
 
+        [Required]
         public bool IsActive { get; set; }
 
+        [Required]
         public bool IsReady { get; set; }
 
+        [Required]
         public bool Call { get; set; }
 
         public int? UserID { get; set; }
         public User User { get; set; }
+
+        [Required]
+        public string Worker { get; set; }
 
         [Timestamp]
         public byte[] RowVersion { get; set; }
@@ -43,7 +51,7 @@ namespace DBZion.DAL.Entities
             RowVersion = new byte[8] { 1, 2, 3, 4, 5, 6, 7, 8 };
         }
 
-        public Order(int receiptId, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, User user)
+        public Order(int receiptId, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, User user, string worker)
         {
             ReceiptId = receiptId;
             ServiceType = serviceType;
@@ -55,6 +63,7 @@ namespace DBZion.DAL.Entities
             IsReady = isReady;
             Call = call;
             User = user;
+            Worker = worker;
             RowVersion = new byte[8] { 1, 2, 3, 4, 5, 6, 7, 8 };
         }
     }

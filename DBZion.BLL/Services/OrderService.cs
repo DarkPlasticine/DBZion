@@ -28,16 +28,17 @@ namespace DBZion.BLL.Services
 
         // Добавление нового заказа в базу данных.
         public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber,
-                             string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call)
+                             string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker)
         {
             using (var transaction = db.Database.BeginTransaction())
             {
                 try
                 {
+                    //определяем, есть ли указанный пользователь в БД
                     User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
                     if (user == null)
                         user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
-                    Order order = new Order(AvailableReceiptId(), serviceType, price, orderDate, description, note, isActive, isReady, call, user);
+                    Order order = new Order(AvailableReceiptId(), serviceType, price, orderDate, description, note, isActive, isReady, call, user, worker);
                     db.Orders.Add(order);
                     db.Save();
                     transaction.Commit();
@@ -52,11 +53,12 @@ namespace DBZion.BLL.Services
 
         // Обновление заказа в базе данных.
         public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber,
-                                string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call)
+                                string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker)
         {
             try
             {
                 Order order = db.Orders.FindById(id);
+                //определяем, есть ли указанный пользователь в БД
                 User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
                 if (user == null)
                     user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
@@ -69,6 +71,7 @@ namespace DBZion.BLL.Services
                 order.IsReady = isReady;
                 order.Call = call;
                 order.User = user;
+                order.Worker = worker;
 
                 db.Orders.Update(order);
                 db.Save();
@@ -216,41 +219,43 @@ namespace DBZion.BLL.Services
         }
 
         /// <summary>
-        /// Находит всех пользователей с заданной фамилией.
-        /// </summary>
-        /// <param name="surname">Фамилия или часть фамилии</param>
-        /// <returns></returns>
-        public List<User> FindUsersBySurname(string surname)
-        {
-            return db.Users.GetAll(p => p.Surname.Contains(surname));
-        }
-
-        /// <summary>
-        /// Находит всех пользователей с заданной фамилией.
-        /// </summary>
-        /// <param name="surname">Фамилия или часть фамилии</param>
-        /// <returns></returns>
-        public async Task<List<User>> FindUsersBySurnameAsync(string surname)
-        {
-            return await db.Users.GetAllAsync(p => p.Surname.Contains(surname));
-        }
-
-        /// <summary>
         /// Возвращает список всех пользователей.
         /// </summary>
         /// <returns></returns>
-        public List<User> GetAllUsers()
+        public List<User> GetUsers()
         {
             return db.Users.GetAll();
         }
 
         /// <summary>
+        /// Возвращает всех пользователей, удовлетворяющих определенному условию.
+        /// Использование: var users = GetUsers(p => p.Surname.Contains("Иванов"));
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public List<User> GetUsers(Func<User, bool> predicate)
+        {
+            return db.Users.GetAll(predicate);
+        }
+
+        /// <summary>
         /// Возвращает список всех пользователей.
         /// </summary>
         /// <returns></returns>
-        public async Task<List<User>> GetAllUsersAsync()
+        public async Task<List<User>> GetUsersAsync()
         {
             return await db.Users.GetAllAsync();
+        }
+
+        /// <summary>
+        /// Возвращает всех пользователей, удовлетворяющих определенному условию.
+        /// Использование: var users = await GetUsersAsync(p => p.Surname.Contains("Иванов"));
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public async Task<List<User>> GetUsersAsync(Expression<Func<User, bool>> predicate)
+        {
+            return await db.Users.GetAllAsync(predicate);
         }
 
         /// <summary>
@@ -261,6 +266,16 @@ namespace DBZion.BLL.Services
         public List<Order> GetUserOrders(User user)
         {
             return db.Users.GetUserOrders(user).ToList();
+        }
+
+        /// <summary>
+        /// Удаляет пользователей, у которых нет заказов.
+        /// </summary>
+        public void RemoveInactiveUsers()
+        {
+            List<User> users = db.Users.GetUsersWithOrders().Where(p => p.Orders.Count == 0).ToList();
+            db.Users.DeleteRange(users);
+            db.Save();
         }
 
         #endregion

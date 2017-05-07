@@ -8,8 +8,8 @@ namespace DBZion.BLL.Interfaces
 {
     public interface IOrderService
     {
-        void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call);
-        void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call);
+        void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker);
+        void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker);
         List<Order> GetOrders();
         List<Order> GetOrders(Func<Order, bool> predicate);
         List<X> GetFieldValues<X>(Func<Order, X> selector);
@@ -22,11 +22,12 @@ namespace DBZion.BLL.Interfaces
         User FindUser(Func<User, bool> predicate);
         Task<User> FindUserAsync(int id);
         Task<User> FindUserAsync(Expression<Func<User, bool>> predicate);
-        List<User> FindUsersBySurname(string surname);
-        Task<List<User>> FindUsersBySurnameAsync(string surname);
-        List<User> GetAllUsers();
-        Task<List<User>> GetAllUsersAsync();
+        List<User> GetUsers();
+        List<User> GetUsers(Func<User, bool> predicate);
+        Task<List<User>> GetUsersAsync();
+        Task<List<User>> GetUsersAsync(Expression<Func<User, bool>> predicate);
         List<Order> GetUserOrders(User user);
+        void RemoveInactiveUsers();
 
         void AddOrderToArchive(int id);
         List<ArchivedOrder> GetArchivedOrders();

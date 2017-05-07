@@ -10,7 +10,7 @@ namespace DBZion.Tests
     [TestClass]
     public class OrderServiceTests
     {
-        private string testConStr = @"Data Source=.\sqlserv;Initial Catalog=ZionTest;Integrated Security=True";
+        private string testConStr = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ZionTest;Integrated Security=True";
         private IOrderService service;
 
         public OrderServiceTests()
@@ -35,8 +35,9 @@ namespace DBZion.Tests
             bool isActive = true;
             bool isReady = false;
             bool call = false;
+            string worker = "Васыль";
 
-            service.AddOrder(surname, firstName, middleName, phoneNumber, serviceType, price, orderDate, description, note, isActive, isReady, call);
+            service.AddOrder(surname, firstName, middleName, phoneNumber, serviceType, price, orderDate, description, note, isActive, isReady, call, worker);
 
 
             int ordersCountAfter = service.GetOrders().Count;

@@ -10,15 +10,19 @@ namespace DBZion.DAL.Entities
         public int UserID { get; set; }
 
         [Required]
+        [StringLength(20)]
         public string Surname { get; set; }
 
         [Required]
+        [StringLength(20)]
         public string FirstName { get; set; }
 
         [Required]
+        [StringLength(20)]
         public string MiddleName { get; set; }
 
         [Required]
+        [StringLength(20)]
         public string PhoneNumber { get; set; }
 
         [Timestamp]
