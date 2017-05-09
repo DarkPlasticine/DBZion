@@ -18,6 +18,10 @@ namespace DBZion.DAL.Entities
 
         [Required]
         [StringLength(20)]
+        public string ReceiptType { get; set; }
+
+        [Required]
+        [StringLength(20)]
         public string ServiceType { get; set; }
 
         [Required]
