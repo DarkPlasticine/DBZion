@@ -16,6 +16,7 @@ using System.Xml.Serialization;
 using System.IO;
 using MahApps.Metro.Controls;
 using MaterialDesignThemes.Wpf;
+using DBZion.BLL.Services;
 
 namespace DBZion
 {
@@ -25,18 +26,25 @@ namespace DBZion
     public partial class Main : MetroWindow
     {
         public string CurrentUser { get; set; }
+
+        protected internal OrderService service = null;
+        protected internal int selectedOrderID = 0;
+
+
         public Main(string user)
         {
             InitializeComponent();
+            service = new OrderService(@"Data Source=Shpizpurgen-PC\SQLExpress;Initial Catalog=DataBaseZion;Integrated Security=True");
             this.Title = "ZION [" + user + "]";
             CurrentUser = user;
         }
 
         private void buttonAdd_Click(object sender, RoutedEventArgs e)
         {
-            var createWindow = new CreateReceiptWindow();
-            createWindow.Show();
-            
+            selectedOrderID = 0;
+            CreateReceiptWindow crw = new CreateReceiptWindow();
+            crw.Owner = this;
+            crw.Show();
         }
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
@@ -54,6 +62,43 @@ namespace DBZion
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            RefreshOrders();
+        }
+
+        private void DataGridOrders_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            //int id = Convert.ToInt32(orderID);
+            var k = (DataGrid)sender;
+            selectedOrderID = ((DBZion.DAL.Entities.Order)k.SelectedItem).OrderId;
+
+            CreateReceiptWindow crw = new CreateReceiptWindow();
+            crw.Owner = this;
+            crw.Show();
+        }
+
+        public void RefreshOrders()
+        {
+            var orders = service.GetOrders(p => p.IsActive == true);
+            DataGridOrders.ItemsSource = orders;
+        }
+
+        private void DataGridOrders_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            var _recepeit = (DAL.Entities.Order)e.Row.DataContext;
+
+            if (_recepeit.IsReady == true)
+            {
+                e.Row.Background = (SolidColorBrush)Application.Current.Resources["AccentColorBrush3"];
+            }
+
+            if (_recepeit.Call == true)
+            {
+                e.Row.Background = new SolidColorBrush(Colors.CornflowerBlue);
+            }
         }
     }
 }

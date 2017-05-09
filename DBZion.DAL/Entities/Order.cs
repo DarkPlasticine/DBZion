@@ -14,6 +14,10 @@ namespace DBZion.DAL.Entities
 
         [Required]
         [StringLength(20)]
+        public string ReceiptType { get; set; }
+
+        [Required]
+        [StringLength(20)]
         public string ServiceType { get; set; }
 
         [Required]
@@ -51,9 +55,10 @@ namespace DBZion.DAL.Entities
             RowVersion = new byte[8] { 1, 2, 3, 4, 5, 6, 7, 8 };
         }
 
-        public Order(int receiptId, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, User user, string worker)
+        public Order(int receiptId, string receiptType, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, User user, string worker)
         {
             ReceiptId = receiptId;
+            ReceiptType = receiptType;
             ServiceType = serviceType;
             Price = price;
             OrderDate = orderDate;

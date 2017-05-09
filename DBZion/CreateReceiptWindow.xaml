@@ -19,9 +19,9 @@
         BorderThickness="1"
         Title="Создание квитанции" Height="490" Width="320" Icon="zion_icon.ico" 
         WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow"
-        ResizeMode="NoResize" Closing="MetroWindow_Closing" >
-    <Grid>
-        <material:DialogHost Name="PopupAddCustom" HorizontalAlignment="Center" VerticalAlignment="Center" IsOpen="False" >
+        ResizeMode="NoResize" Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded" >
+    <Grid x:Name="gridOrder">
+        <!--<material:DialogHost Name="PopupAddCustom" HorizontalAlignment="Center" VerticalAlignment="Center" IsOpen="False" >
             <material:DialogHost.DialogContent>
                 <StackPanel Margin="16" Orientation="Vertical">
                     <Label Content="Add custom date" FontSize="16" />
@@ -32,38 +32,51 @@
                     </StackPanel>
                 </StackPanel>
             </material:DialogHost.DialogContent>
-        </material:DialogHost>
+        </material:DialogHost>-->
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBox x:Name="txbNumber" material:HintAssist.Hint="№" Margin="0 0 16 0" Width="25"/>
-                <TextBox x:Name="txbFullName" material:HintAssist.Hint="ФИО" Width="235" />
+                <TextBox x:Name="txbReceiptId" Margin="0 0 16 0" Width="25" Text="{Binding Path=ReceiptId}" IsEnabled="False"/>
+                <ComboBox x:Name="cbFullName" material:HintAssist.Hint="ФИО" Width="235" 
+                          IsEditable="True" TextSearch.TextPath=""
+                          ItemsSource="{Binding}"  IsSynchronizedWithCurrentItem="True"
+                          
+                          TextBoxBase.TextChanged="OnComboboxTextChanged"
+                          Text="{Binding Path=User.FullName, Mode=OneWay}">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel IsVirtualizing="True" IsItemsHost="True"/>
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </ComboBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <material:PackIcon Kind="PhoneInTalk" Width="20" Height="20" VerticalAlignment="Center" Margin="0 0 5 0" Foreground="{Binding ElementName=txbPhone, Path=BorderBrush}"/>
-                <mask:MaskedTextBox Text="{Binding Phone}" Mask="8(###)###-####" Style="{StaticResource MaterialDesignTextBox}" HorizontalAlignment="Center"
+                <mask:MaskedTextBox Text="{Binding Path=User.PhoneNumber}" Mask="8(###)###-####" Style="{StaticResource MaterialDesignTextBox}" HorizontalAlignment="Center"
                                 material:TransitionAssist.DisableTransitions="True" Width="90" TextAlignment="Center" x:Name="txbPhone"/>
-                <CheckBox Content="Позвонить" VerticalAlignment="Center"  Margin="75 0 0 0"/>
+                <CheckBox IsChecked="{Binding Path=Call}" Content="Позвонить" VerticalAlignment="Center"  Margin="75 0 0 0" x:Name="chkCall"/>
             </StackPanel>
-            <ComboBox x:Name="cbReceipt" material:HintAssist.Hint="Тип Квитанции" Margin="18,0" ItemsSource="{Binding}" SelectedValue="Name"></ComboBox>
-            <TextBox x:Name="txbService" material:HintAssist.Hint="Вид обслуживания" Margin="18,0"/>
+            <ComboBox x:Name="cbReceiptType" material:HintAssist.Hint="Тип Квитанции" Margin="18,0" SelectedValue="{Binding Path=ReceiptType}"></ComboBox>
+            <TextBox x:Name="txbServiceType" material:HintAssist.Hint="Вид обслуживания" Margin="18,0" Text="{Binding Path=ServiceType}"/>
             <TextBox x:Name="txbDescription" material:HintAssist.Hint="Описание" Margin="18,0" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="90"
                      VerticalScrollBarVisibility="Auto" 
                      AcceptsReturn="True"                 
-                     SpellCheck.IsEnabled="True"/>
-            <TextBox x:Name="txbComment" material:HintAssist.Hint="Комментарии" Margin="18,0" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="90"
+                     SpellCheck.IsEnabled="True"
+                     Text="{Binding Path=Description}"/>
+            <TextBox x:Name="txbNote" material:HintAssist.Hint="Комментарии" Margin="18,0" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="90"
                      VerticalScrollBarVisibility="Auto" 
                      AcceptsReturn="True"                 
-                     SpellCheck.IsEnabled="True"/>
+                     SpellCheck.IsEnabled="True"
+                     Text="{Binding Path=Note}"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock x:Name="txbDate" Text="23.10.2017 10:30:42" VerticalAlignment="Center" Margin="0,0,45,0"/>
+                <TextBlock x:Name="txbDate" Text="{Binding Path=OrderDate}" VerticalAlignment="Center" Margin="0,0,45,0"/>
                 <Label Content="Принял:"/>
-                <Label Content="{Binding}"/>
+                <Label x:Name="txbWorker" Content="{Binding Path=Worker}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Label Content="Сумма:"/>
-                <TextBox x:Name="txbSumm" Width="222"/>
+                <TextBox x:Name="txbPrice" Width="222" Text="{Binding Path=Price}"/>
             </StackPanel>
-            <CheckBox x:Name="chkDone" Content="Готовность" VerticalAlignment="Center" Margin="17,8,0,0"/>
+            <CheckBox x:Name="chkDone" Content="Готовность" VerticalAlignment="Center" Margin="17,8,0,0" IsChecked="{Binding Path=IsReady}"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="0 8 0 0">
                     <Button.Content>
@@ -73,7 +86,7 @@
                         </StackPanel>
                     </Button.Content>
                 </Button>
-                <Button Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="16 8 0 0">
+                <Button Style="{DynamicResource MaterialDesignRaisedDarkButton}" Margin="16 8 0 0" x:Name="buttonSave" Click="buttonSave_Click">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
                             <material:PackIcon Kind="ContentSave"  material:ColorZoneAssist.Mode="Light" Height="20" Width="20" VerticalAlignment="Center" Margin="0 0 8 0 "/>

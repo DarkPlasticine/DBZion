@@ -27,7 +27,7 @@ namespace DBZion.BLL.Services
         #region Работа с заказами
 
         // Добавление нового заказа в базу данных.
-        public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber,
+        public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, string receiptType,
                              string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker)
         {
             using (var transaction = db.Database.BeginTransaction())
@@ -38,7 +38,7 @@ namespace DBZion.BLL.Services
                     User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
                     if (user == null)
                         user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
-                    Order order = new Order(AvailableReceiptId(), serviceType, price, orderDate, description, note, isActive, isReady, call, user, worker);
+                    Order order = new Order(AvailableReceiptId(), receiptType, serviceType, price, orderDate, description, note, isActive, isReady, call, user, worker);
                     db.Orders.Add(order);
                     db.Save();
                     transaction.Commit();
@@ -52,8 +52,8 @@ namespace DBZion.BLL.Services
         }
 
         // Обновление заказа в базе данных.
-        public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber,
-                                string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker)
+        public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, string receiptType,
+                                string serviceType, int price, string description, string note, bool isActive, bool isReady, bool call, string worker)
         {
             try
             {
@@ -62,9 +62,9 @@ namespace DBZion.BLL.Services
                 User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
                 if (user == null)
                     user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
+                order.ReceiptType = receiptType;
                 order.ServiceType = serviceType;
                 order.Price = price;
-                order.OrderDate = orderDate;
                 order.Description = description;
                 order.Note = note;
                 order.IsActive = isActive;
