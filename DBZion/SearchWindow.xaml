@@ -1,0 +1,44 @@
+﻿<metro:MetroWindow x:Class="DBZion.SearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DBZion"
+        mc:Ignorable="d"
+        
+        xmlns:mask="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
+        GlowBrush="{DynamicResource AccentColorBrush}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        BorderThickness="1"
+        
+        Title="Поиск квитанций" Height="490" Width="520" Icon="zion_icon.ico" 
+        WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow"
+        ResizeMode="NoResize">
+    <Grid>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                
+                <material:PackIcon Kind="Numeric" Width="20" Height="20" Foreground="{Binding ElementName=txbNumber, Path=BorderBrush}" HorizontalAlignment="Center" Margin="0 15 8 0"/>
+                <TextBox Grid.Row="4" Grid.Column="1" material:HintAssist.Hint="№ Квитанции" Width="90"
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" x:Name="txbNumber" Margin="0 0 20 0"/>
+
+                <material:PackIcon Kind="PhoneInTalk" Width="20" Height="20" HorizontalAlignment="Center" Margin="0 15 8 0" Foreground="{Binding ElementName=txbPhone, Path=BorderBrush}"/>
+                <mask:MaskedTextBox Text="{Binding Phone}" Mask="8(###)###-####" Style="{StaticResource MaterialDesignFloatingHintTextBox}" HorizontalAlignment="Center"
+                                material:HintAssist.Hint="Телефон"
+                                material:TransitionAssist.DisableTransitions="True" Width="90" TextAlignment="Center" x:Name="txbPhone"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <material:PackIcon Kind="AccountCardDetails" Width="20" Height="20" Foreground="{Binding ElementName=txbFullName, Path=BorderBrush}" HorizontalAlignment="Center" Margin="0 15 8 0"/>
+                <TextBox Grid.Row="4" Grid.Column="1" material:HintAssist.Hint="ФИО" Width="240"
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" x:Name="txbFullName"/>
+            </StackPanel>
+        </StackPanel>
+
+    </Grid>
+</metro:MetroWindow>
