@@ -36,12 +36,12 @@ namespace DBZion.DAL.Repositories
 
         public Order FindById(int id)
         {
-            return db.Orders.Find(id);
+            return db.Orders.Include(p => p.User).Where(p => p.OrderId == id).FirstOrDefault();
         }
 
         public async Task<Order> FindByIdAsync(int id)
         {
-            return await db.Orders.FindAsync(id);
+            return await db.Orders.Include(p => p.User).Where(p => p.OrderId == id).FirstOrDefaultAsync();
         }
 
         public List<Order> GetAll()

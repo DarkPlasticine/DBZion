@@ -34,6 +34,11 @@ namespace DBZion.DAL.Repositories
             db.Users.Remove(user);
         }
 
+        public void DeleteRange(IEnumerable<User> users)
+        {
+            db.Users.RemoveRange(users);
+        }
+
         public User FindById(int id)
         {
             return db.Users.Find(id);
@@ -76,17 +81,22 @@ namespace DBZion.DAL.Repositories
 
         public List<Order> GetUserOrders(User user)
         {
-            return db.Users.Include(p => p.Orders).Where(p => p.UserID == user.UserID).FirstOrDefault().Orders;
+            return db.Users.Include(p => p.Orders).Where(p => p.UserID == user.UserID).FirstOrDefault().Orders.ToList();
         }
 
-        public List<X> GetPropValues<X>(Func<User, bool> predicate, Func<User, X> selector)
+        public List<User> GetUsersWithOrders()
         {
-            return db.Users.Where(predicate).Select(selector).Distinct().ToList();
+            return db.Users.Include(p => p.Orders).ToList();
         }
 
-        public async Task<List<X>> GetPropValuesAsync<X>(Expression<Func<User, bool>> predicate, Expression<Func<User, X>> selector)
+        public List<X> GetPropValues<X>(Func<User, X> selector)
         {
-            return await db.Users.Where(predicate).Select(selector).Distinct().ToListAsync();
+            return db.Users.Select(selector).Distinct().ToList();
+        }
+
+        public async Task<List<X>> GetPropValuesAsync<X>(Expression<Func<User, X>> selector)
+        {
+            return await db.Users.Select(selector).Distinct().ToListAsync();
         }
     }
 }

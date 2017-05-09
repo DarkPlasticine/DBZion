@@ -4,9 +4,9 @@ using DBZion.DAL.Interfaces;
 using DBZion.DAL.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DBZion.BLL.Services
@@ -26,21 +26,63 @@ namespace DBZion.BLL.Services
 
         #region Работа с заказами
 
+        // Добавление нового заказа в базу данных.
         public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber,
-                             string serviceType, int price, DateTime orderDate, string description, string note)
+                             string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    //определяем, есть ли указанный пользователь в БД
+                    User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
+                    if (user == null)
+                        user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
+                    Order order = new Order(AvailableReceiptId(), serviceType, price, orderDate, description, note, isActive, isReady, call, user, worker);
+                    db.Orders.Add(order);
+                    db.Save();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Ошибка при добавлении заказа \n" + ex.Message);
+                }
+            }
+        }
+
+        // Обновление заказа в базе данных.
+        public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber,
+                                string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker)
         {
             try
             {
+                Order order = db.Orders.FindById(id);
+                //определяем, есть ли указанный пользователь в БД
                 User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
-                if (user != null)
-                    AddUser(userSurname, userFirstName, userMiddleName, userPhoneNumber);
-                Order order = new Order(serviceType, price, orderDate, description, note, user);
-                db.Orders.Add(order);
+                if (user == null)
+                    user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
+                order.ServiceType = serviceType;
+                order.Price = price;
+                order.OrderDate = orderDate;
+                order.Description = description;
+                order.Note = note;
+                order.IsActive = isActive;
+                order.IsReady = isReady;
+                order.Call = call;
+                order.User = user;
+                order.Worker = worker;
+
+                db.Orders.Update(order);
                 db.Save();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw new Exception("Данный заказ ранее уже был изменен. \n" + ex.Message);
             }
             catch (Exception ex)
             {
-                throw new Exception("Ошибка при добавлении заказа \n" + ex.Message);
+                throw new Exception("Ошибка при обновлении заказа \n" + ex.Message);
             }
         }
 
@@ -177,61 +219,43 @@ namespace DBZion.BLL.Services
         }
 
         /// <summary>
-        /// Находит всех пользователей с заданной фамилией.
-        /// </summary>
-        /// <param name="surname">Фамилия или часть фамилии</param>
-        /// <returns></returns>
-        public List<User> FindUsersBySurname(string surname)
-        {
-            return db.Users.GetAll(p => p.Surname.Contains(surname));
-        }
-
-        /// <summary>
-        /// Находит всех пользователей с заданной фамилией.
-        /// </summary>
-        /// <param name="surname">Фамилия или часть фамилии</param>
-        /// <returns></returns>
-        public async Task<List<User>> FindUsersBySurnameAsync(string surname)
-        {
-            return await db.Users.GetAllAsync(p => p.Surname.Contains(surname));
-        }
-
-        /// <summary>
         /// Возвращает список всех пользователей.
         /// </summary>
         /// <returns></returns>
-        public List<User> GetAllUsers()
+        public List<User> GetUsers()
         {
             return db.Users.GetAll();
         }
 
         /// <summary>
+        /// Возвращает всех пользователей, удовлетворяющих определенному условию.
+        /// Использование: var users = GetUsers(p => p.Surname.Contains("Иванов"));
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public List<User> GetUsers(Func<User, bool> predicate)
+        {
+            return db.Users.GetAll(predicate);
+        }
+
+        /// <summary>
         /// Возвращает список всех пользователей.
         /// </summary>
         /// <returns></returns>
-        public async Task<List<User>> GetAllUsersAsync()
+        public async Task<List<User>> GetUsersAsync()
         {
             return await db.Users.GetAllAsync();
         }
 
         /// <summary>
-        /// Возвращает список всех пользователей в формате "Фамилия Имя Отчество".
+        /// Возвращает всех пользователей, удовлетворяющих определенному условию.
+        /// Использование: var users = await GetUsersAsync(p => p.Surname.Contains("Иванов"));
         /// </summary>
-        /// <param name="surname"></param>
+        /// <param name="predicate"></param>
         /// <returns></returns>
-        public List<string> GetAllUsersToList(string surname)
+        public async Task<List<User>> GetUsersAsync(Expression<Func<User, bool>> predicate)
         {
-            return db.Users.GetPropValues(p => p.Surname.Contains(surname), p => p.FullName);
-        }
-
-        /// <summary>
-        /// Возвращает список всех пользователей в формате "Фамилия Имя Отчество".
-        /// </summary>
-        /// <param name="surname"></param>
-        /// <returns></returns>
-        public async Task<List<string>> GetAllUsersToListAsync(string surname)
-        {
-            return await db.Users.GetPropValuesAsync(p => p.Surname.Contains(surname), p => p.FullName);
+            return await db.Users.GetAllAsync(predicate);
         }
 
         /// <summary>
@@ -241,7 +265,115 @@ namespace DBZion.BLL.Services
         /// <returns></returns>
         public List<Order> GetUserOrders(User user)
         {
-            return db.Users.GetUserOrders(user);
+            return db.Users.GetUserOrders(user).ToList();
+        }
+
+        /// <summary>
+        /// Удаляет пользователей, у которых нет заказов.
+        /// </summary>
+        public void RemoveInactiveUsers()
+        {
+            List<User> users = db.Users.GetUsersWithOrders().Where(p => p.Orders.Count == 0).ToList();
+            db.Users.DeleteRange(users);
+            db.Save();
+        }
+
+        #endregion
+
+        #region Работа с архивом
+
+        /// <summary>
+        /// Переносит выбранный заказ в архив.
+        /// </summary>
+        /// <param name="id">ID архивируемого заказа.</param>
+        public void AddOrderToArchive(int id)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    Order order = db.Orders.FindById(id);
+                    ArchivedOrder archivedOrder = new ArchivedOrder(order.ReceiptId, order.ServiceType, order.Price, order.OrderDate, order.Description, order.Note, order.User);
+
+                    db.Orders.Delete(order);
+                    db.Archive.Add(archivedOrder);
+
+                    db.Save();
+                    transaction.Commit();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Данный заказ уже ранее был изменен. \n" + ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Ошибка при удалении заказа в архив. \n" + ex.Message);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Возвращает все заказы, находящиеся в архиве.
+        /// </summary>
+        /// <returns></returns>
+        public List<ArchivedOrder> GetArchivedOrders()
+        {
+            return db.Archive.GetAll();
+        }
+
+        /// <summary>
+        /// Возвращает все заказы, находящиеся в архиве и удовлетворяющие определенному условию.
+        /// Использование: var orders = GetArchivedOrders(p => p.ReceiptId == 48);
+        /// </summary>
+        /// <param name="predicate">Условие</param>
+        /// <returns></returns>
+        public List<ArchivedOrder> GetArchivedOrders(Func<ArchivedOrder, bool> predicate)
+        {
+            return db.Archive.GetAll(predicate);
+        }
+
+        /// <summary>
+        /// Возвращает все заказы, находящиеся в архиве.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<ArchivedOrder>> GetArchivedOrdersAsync()
+        {
+            return await db.Archive.GetAllAsync();
+        }
+
+        /// <summary>
+        /// Возвращает все заказы, находящиеся в архиве и удовлетворяющие определенному условию.
+        /// Использование: var orders = await GetArchivedOrdersAsync(p => p.ReceiptId == 48);
+        /// </summary>
+        /// <param name="predicate">Условие</param>
+        /// <returns></returns>
+        public async Task<List<ArchivedOrder>> GetArchivedOrdersAsync(Expression<Func<ArchivedOrder, bool>> predicate)
+        {
+            return await db.Archive.GetAllAsync(predicate);
+        }
+
+        #endregion
+
+        #region Вспомогательные методы
+
+        /// <summary>
+        /// Получает первый свободный номер для Order.ReceiptId
+        /// </summary>
+        /// <returns></returns>
+        private int AvailableReceiptId()
+        {
+            //получаем все ReceiptId из БД
+            List<int> receiptIDS = db.Orders.GetPropValues(p => p.ReceiptId);
+
+            for (int i = 1; i < int.MaxValue; i++)
+            {
+                if (!receiptIDS.Contains(i))
+                    return i;
+            }
+
+            return 0;
         }
 
         #endregion
