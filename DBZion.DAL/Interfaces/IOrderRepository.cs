@@ -28,6 +28,10 @@ namespace DBZion.DAL.Interfaces
 
         List<X> GetPropValues<X>(Func<Order, X> selector);
 
+        List<X> GetPropValues<X>(Func<Order, bool> predicate, Func<Order, X> selector);
+
         Task<List<X>> GetPropValuesAsync<X>(Expression<Func<Order, X>> selector);
+
+        Task<List<X>> GetPropValuesAsync<X>(Expression<Func<Order, bool>> predicate, Expression<Func<Order, X>> selector);
     }
 }

@@ -69,9 +69,19 @@ namespace DBZion.DAL.Repositories
             return db.Orders.Select(selector).Distinct().ToList();
         }
 
+        public List<X> GetPropValues<X>(Func<Order, bool> predicate, Func<Order, X> selector)
+        {
+            return db.Orders.Where(predicate).Select(selector).Distinct().ToList();
+        }
+
         public async Task<List<X>> GetPropValuesAsync<X>(Expression<Func<Order, X>> selector)
         {
             return await db.Orders.Select(selector).Distinct().ToListAsync();
+        }
+
+        public async Task<List<X>> GetPropValuesAsync<X>(Expression<Func<Order, bool>> predicate, Expression<Func<Order, X>> selector)
+        {
+            return await db.Orders.Where(predicate).Select(selector).Distinct().ToListAsync();
         }
     }
 }
