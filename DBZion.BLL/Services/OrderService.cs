@@ -27,7 +27,7 @@ namespace DBZion.BLL.Services
         #region Работа с заказами
 
         // Добавление нового заказа в базу данных.
-        public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, string receiptType,
+        public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber,
                              string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker)
         {
             using (var transaction = db.Database.BeginTransaction())
@@ -38,7 +38,7 @@ namespace DBZion.BLL.Services
                     User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
                     if (user == null)
                         user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
-                    Order order = new Order(AvailableReceiptId(), receiptType, serviceType, price, orderDate, description, note, isActive, isReady, call, user, worker);
+                    Order order = new Order(AvailableReceiptId(), serviceType, price, orderDate, description, note, isActive, isReady, call, user, worker);
                     db.Orders.Add(order);
                     db.Save();
                     transaction.Commit();
@@ -52,8 +52,8 @@ namespace DBZion.BLL.Services
         }
 
         // Обновление заказа в базе данных.
-        public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, string receiptType,
-                                string serviceType, int price, string description, string note, bool isActive, bool isReady, bool call, string worker)
+        public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber,
+                                string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker)
         {
             try
             {
@@ -62,7 +62,6 @@ namespace DBZion.BLL.Services
                 User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
                 if (user == null)
                     user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
-                order.ReceiptType = receiptType;
                 order.ServiceType = serviceType;
                 order.Price = price;
                 order.Description = description;
@@ -99,6 +98,19 @@ namespace DBZion.BLL.Services
         }
 
         /// <summary>
+        /// Возвращает уникальные значения для выбранного поля, удовлетворяющие определенному условию.
+        /// Использование: var serviceTypes = GetFieldValues(c => c.IsActive == true, p => p.ServiceType);
+        /// </summary>
+        /// <typeparam name="X"></typeparam>
+        /// <param name="predicate"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public List<X> GetFieldValues<X>(Func<Order, bool> predicate, Func<Order, X> selector)
+        {
+            return db.Orders.GetPropValues(predicate, selector);
+        }
+
+        /// <summary>
         /// Возвращает уникальные значения для выбранного поля.
         /// Использование: var serviceTypes = await GetFieldValuesAsync(p => p.ServiceType);
         /// </summary>
@@ -108,6 +120,19 @@ namespace DBZion.BLL.Services
         public async Task<List<X>> GetFieldValuesAsync<X>(Expression<Func<Order, X>> selector)
         {
             return await db.Orders.GetPropValuesAsync(selector);
+        }
+
+        /// <summary>
+        /// Возвращает уникальные значения для выбранного поля, удовлетворяющие определенному условию.
+        /// Использование: var serviceTypes = await GetFieldValuesAsync(c => c.IsActive == true, p => p.ServiceType);
+        /// </summary>
+        /// <typeparam name="X"></typeparam>
+        /// <param name="predicate"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public async Task<List<X>> GetFieldValuesAsync<X>(Expression<Func<Order, bool>> predicate, Expression<Func<Order, X>> selector)
+        {
+            return await db.Orders.GetPropValuesAsync(predicate, selector);
         }
 
         /// <summary>
@@ -151,7 +176,6 @@ namespace DBZion.BLL.Services
         }
 
         #endregion
-
 
         #region Работа с пользователями
 
@@ -269,89 +293,19 @@ namespace DBZion.BLL.Services
         }
 
         /// <summary>
-        /// Удаляет пользователей, у которых нет заказов.
+        /// Удаляет пользователей, у которых нет заказов и возвращает количество удаленных записей.
         /// </summary>
-        public void RemoveInactiveUsers()
+        public int RemoveInactiveUsers()
         {
             List<User> users = db.Users.GetUsersWithOrders().Where(p => p.Orders.Count == 0).ToList();
-            db.Users.DeleteRange(users);
-            db.Save();
-        }
-
-        #endregion
-
-        #region Работа с архивом
-
-        /// <summary>
-        /// Переносит выбранный заказ в архив.
-        /// </summary>
-        /// <param name="id">ID архивируемого заказа.</param>
-        public void AddOrderToArchive(int id)
-        {
-            using (var transaction = db.Database.BeginTransaction())
+            if (users.Count != 0)
             {
-                try
-                {
-                    Order order = db.Orders.FindById(id);
-                    ArchivedOrder archivedOrder = new ArchivedOrder(order.ReceiptId, order.ServiceType, order.Price, order.OrderDate, order.Description, order.Note, order.User);
-
-                    db.Orders.Delete(order);
-                    db.Archive.Add(archivedOrder);
-
-                    db.Save();
-                    transaction.Commit();
-                }
-                catch (DbUpdateConcurrencyException ex)
-                {
-                    transaction.Rollback();
-                    throw new Exception("Данный заказ уже ранее был изменен. \n" + ex.Message);
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    throw new Exception("Ошибка при удалении заказа в архив. \n" + ex.Message);
-                }
+                db.Users.DeleteRange(users);
+                db.Save();
+                return users.Count;
             }
-        }
-
-        /// <summary>
-        /// Возвращает все заказы, находящиеся в архиве.
-        /// </summary>
-        /// <returns></returns>
-        public List<ArchivedOrder> GetArchivedOrders()
-        {
-            return db.Archive.GetAll();
-        }
-
-        /// <summary>
-        /// Возвращает все заказы, находящиеся в архиве и удовлетворяющие определенному условию.
-        /// Использование: var orders = GetArchivedOrders(p => p.ReceiptId == 48);
-        /// </summary>
-        /// <param name="predicate">Условие</param>
-        /// <returns></returns>
-        public List<ArchivedOrder> GetArchivedOrders(Func<ArchivedOrder, bool> predicate)
-        {
-            return db.Archive.GetAll(predicate);
-        }
-
-        /// <summary>
-        /// Возвращает все заказы, находящиеся в архиве.
-        /// </summary>
-        /// <returns></returns>
-        public async Task<List<ArchivedOrder>> GetArchivedOrdersAsync()
-        {
-            return await db.Archive.GetAllAsync();
-        }
-
-        /// <summary>
-        /// Возвращает все заказы, находящиеся в архиве и удовлетворяющие определенному условию.
-        /// Использование: var orders = await GetArchivedOrdersAsync(p => p.ReceiptId == 48);
-        /// </summary>
-        /// <param name="predicate">Условие</param>
-        /// <returns></returns>
-        public async Task<List<ArchivedOrder>> GetArchivedOrdersAsync(Expression<Func<ArchivedOrder, bool>> predicate)
-        {
-            return await db.Archive.GetAllAsync(predicate);
+            else
+                return 0;
         }
 
         #endregion
@@ -364,8 +318,8 @@ namespace DBZion.BLL.Services
         /// <returns></returns>
         private int AvailableReceiptId()
         {
-            //получаем все ReceiptId из БД
-            List<int> receiptIDS = db.Orders.GetPropValues(p => p.ReceiptId);
+            //получаем все ReceiptId активных заказов из БД
+            List<int> receiptIDS = db.Orders.GetPropValues(c => c.IsActive == true, p => p.ReceiptId);
 
             for (int i = 1; i < int.MaxValue; i++)
             {

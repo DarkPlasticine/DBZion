@@ -13,6 +13,10 @@ namespace DBZion.DAL.Entities
         public int ReceiptId { get; set; }
 
         [Required]
+        [StringLength(15)]
+        public string ReceiptType { get; set; }
+
+        [Required]
         [StringLength(20)]
         public string ReceiptType { get; set; }
 

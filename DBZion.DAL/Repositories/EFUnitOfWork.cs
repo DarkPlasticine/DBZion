@@ -9,21 +9,10 @@ namespace DBZion.DAL.Repositories
         private EFDbContext db;
         private OrderRepository orderRepository;
         private UserRepository userRepository;
-        private ArchiveRepository archiveRepository;
 
         public EFUnitOfWork(string connectionString)
         {
             db = new EFDbContext(connectionString);
-        }
-
-        public IArchiveRepository Archive
-        {
-            get
-            {
-                if (archiveRepository == null)
-                    archiveRepository = new ArchiveRepository(db);
-                return archiveRepository;
-            }
         }
 
         public IOrderRepository Orders

@@ -23,7 +23,6 @@ namespace DBZion.Tests
         {
             int ordersCountBefore = service.GetOrders().Count;
 
-            string receiptType = "Услуги";
             string surname = "Валеронов";
             string firstName = "Валерон";
             string middleName = "Валеронович";
@@ -38,29 +37,12 @@ namespace DBZion.Tests
             bool call = false;
             string worker = "Васыль";
 
-            service.AddOrder(surname, firstName, middleName, phoneNumber, receiptType, serviceType, price, orderDate, description, note, isActive, isReady, call, worker);
+            service.AddOrder(surname, firstName, middleName, phoneNumber, serviceType, price, orderDate, description, note, isActive, isReady, call, worker);
 
 
             int ordersCountAfter = service.GetOrders().Count;
 
             Assert.AreEqual(ordersCountBefore + 1, ordersCountAfter);
         }
-
-        [TestMethod]
-        public void OrderMovedToArchiveTest()
-        {
-            int ordersCountBefore = service.GetArchivedOrders().Count;
-
-            List<Order> orders = service.GetOrders();
-            Order order = orders[0];
-
-            service.AddOrderToArchive(order.OrderId);
-
-            int ordersCountAfter = service.GetArchivedOrders().Count;
-
-            Assert.AreEqual(ordersCountBefore + 1, ordersCountAfter);
-        }
-
-
     }
 }

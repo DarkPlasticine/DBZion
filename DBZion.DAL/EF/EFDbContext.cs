@@ -7,7 +7,6 @@ namespace DBZion.DAL.EF
 {
     public class EFDbContext : DbContext
     {
-        public DbSet<ArchivedOrder> Archive { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<User> Users { get; set; }
 
@@ -58,9 +57,9 @@ namespace DBZion.DAL.EF
             DateTime datetime2 = new DateTime(2017, 7, 12, 16, 26, 12);
             DateTime datetime3 = new DateTime(2017, 1, 15, 16, 26, 12);
 
-            Order order1 = new Order(1, "Услуги", "Тест", 500, datetime1, "Описание", "Заметка", true, false, false, user1, "Васыль");
-            Order order2 = new Order(2, @"Тест Б\У", "Ремонт", 2500, datetime2, "Описание", "Заметка", false, false, false, user2, "Вазген");
-            Order order3 = new Order(3, "Картридж", "Поебень", 666, datetime3, "Описание", "Заметка", false, false, false, user3, "Короед");
+            Order order1 = new Order(1, "Тест", 500, datetime1, "Описание", "Заметка", true, false, false, user1, "Васыль");
+            Order order2 = new Order(1, "Ремонт", 2500, datetime2, "Описание", "Заметка", false, false, false, user2, "Вазген");
+            Order order3 = new Order(1, "Поебень", 666, datetime3, "Описание", "Заметка", false, false, false, user3, "Короед");
 
             context.Orders.Add(order1);
             context.Orders.Add(order2);
