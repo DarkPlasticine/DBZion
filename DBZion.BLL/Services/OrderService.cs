@@ -27,7 +27,7 @@ namespace DBZion.BLL.Services
         #region Работа с заказами
 
         // Добавление нового заказа в базу данных.
-        public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, string receiptType,
+        public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, int receiptId, string receiptType,
                              string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker)
         {
             using (var transaction = db.Database.BeginTransaction())
@@ -38,7 +38,7 @@ namespace DBZion.BLL.Services
                     User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
                     if (user == null)
                         user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
-                    Order order = new Order(AvailableReceiptId(), receiptType, serviceType, price, orderDate, description, note, isActive, isReady, call, user, worker);
+                    Order order = new Order(receiptId, receiptType, serviceType, price, orderDate, description, note, isActive, isReady, call, user, worker);
                     db.Orders.Add(order);
                     db.Save();
                     transaction.Commit();
@@ -52,7 +52,7 @@ namespace DBZion.BLL.Services
         }
 
         // Обновление заказа в базе данных.
-        public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, string receiptType,
+        public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, int receiptId, string receiptType,
                                 string serviceType, int price, string description, string note, bool isActive, bool isReady, bool call, string worker)
         {
             try
@@ -62,6 +62,7 @@ namespace DBZion.BLL.Services
                 User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
                 if (user == null)
                     user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
+                order.ReceiptId = receiptId;
                 order.ReceiptType = receiptType;
                 order.ServiceType = serviceType;
                 order.Price = price;
@@ -99,6 +100,19 @@ namespace DBZion.BLL.Services
         }
 
         /// <summary>
+        /// Возвращает уникальные значения для выбранного поля, удовлетворяющие определенному условию.
+        /// Использование: var serviceTypes = GetFieldValues(c => c.IsActive == true, p => p.ServiceType);
+        /// </summary>
+        /// <typeparam name="X"></typeparam>
+        /// <param name="predicate"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public List<X> GetFieldValues<X>(Func<Order, bool> predicate, Func<Order, X> selector)
+        {
+            return db.Orders.GetPropValues(predicate, selector);
+        }
+
+        /// <summary>
         /// Возвращает уникальные значения для выбранного поля.
         /// Использование: var serviceTypes = await GetFieldValuesAsync(p => p.ServiceType);
         /// </summary>
@@ -108,6 +122,19 @@ namespace DBZion.BLL.Services
         public async Task<List<X>> GetFieldValuesAsync<X>(Expression<Func<Order, X>> selector)
         {
             return await db.Orders.GetPropValuesAsync(selector);
+        }
+
+        /// <summary>
+        /// Возвращает уникальные значения для выбранного поля, удовлетворяющие определенному условию.
+        /// Использование: var serviceTypes = await GetFieldValuesAsync(c => c.IsActive == true, p => p.ServiceType);
+        /// </summary>
+        /// <typeparam name="X"></typeparam>
+        /// <param name="predicate"></param>
+        /// <param name="selector"></param>
+        /// <returns></returns>
+        public async Task<List<X>> GetFieldValuesAsync<X>(Expression<Func<Order, bool>> predicate, Expression<Func<Order, X>> selector)
+        {
+            return await db.Orders.GetPropValuesAsync(predicate, selector);
         }
 
         /// <summary>
