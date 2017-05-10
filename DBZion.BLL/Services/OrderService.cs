@@ -52,7 +52,7 @@ namespace DBZion.BLL.Services
         }
 
         // Обновление заказа в базе данных.
-        public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber,
+        public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, string receiptType,
                                 string serviceType, int price, string description, string note, bool isActive, bool isReady, bool call, string worker)
         {
             try
@@ -62,6 +62,7 @@ namespace DBZion.BLL.Services
                 User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
                 if (user == null)
                     user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
+                order.ReceiptType = receiptType;
                 order.ServiceType = serviceType;
                 order.Price = price;
                 order.Description = description;
