@@ -23,7 +23,6 @@ namespace DBZion.Tests
         {
             int ordersCountBefore = service.GetOrders().Count;
 
-            string receiptType = "Ремонт";
             string surname = "Валеронов";
             string firstName = "Валерон";
             string middleName = "Валеронович";
@@ -38,7 +37,7 @@ namespace DBZion.Tests
             bool call = false;
             string worker = "Васыль";
 
-            service.AddOrder(surname, firstName, middleName, phoneNumber, 5, receiptType, serviceType, price, orderDate, description, note, isActive, isReady, call, worker);
+            service.AddOrder(surname, firstName, middleName, phoneNumber, serviceType, price, orderDate, description, note, isActive, isReady, call, worker);
 
 
             int ordersCountAfter = service.GetOrders().Count;
