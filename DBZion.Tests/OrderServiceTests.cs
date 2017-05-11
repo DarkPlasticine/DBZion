@@ -23,7 +23,7 @@ namespace DBZion.Tests
         {
             int ordersCountBefore = service.GetOrders().Count;
 
-            string receiptType = "Ремонт";
+            string receiptType = @"Ремонт Б/У";
             string surname = "Валеронов";
             string firstName = "Валерон";
             string middleName = "Валеронович";
