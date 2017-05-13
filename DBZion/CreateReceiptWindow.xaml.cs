@@ -60,16 +60,31 @@ namespace DBZion
                     if (order != null)
                     {
                         gridOrder.DataContext = order;
+                        btnAgreement.IsEnabled = true;
                     }
                 }
                 else
                 {
                     txbWorker.Content = main.CurrentUser;
-                    txbReceiptId.Text = "???";
                     cbFullName.ItemsSource = main.service.GetUsers().Select(p => p.FullName).ToList();
+                    txbDate.Text = DateTime.Now.ToString();
+                    txbReceiptId.Text = GetReceiptID(main.service.GetOrders(k => k.IsActive == true).ToDictionary(p => p.ReceiptId)).ToString();
                 }
             }
+        }
 
+        private int GetReceiptID (Dictionary<int, DAL.Entities.Order> dic)
+        {
+            Random rnd = new Random(DateTime.Now.Millisecond);
+            bool flag = true;
+            int i = 0;
+            while (flag)
+            {
+                i = rnd.Next(1, 100);
+                if (!dic.ContainsKey(i)) flag = false;
+            }
+
+            return i;
         }
 
         private void buttonSave_Click(object sender, RoutedEventArgs e)
@@ -77,13 +92,16 @@ namespace DBZion
             string[] sb = cbFullName.Text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (isUpdating == false)
             {
-                DateTime dateTime = DateTime.Now;
-                main.service.AddOrder(sb[0], sb[1], sb[2], txbPhone.Text, cbReceiptType.Text, txbServiceType.Text, Convert.ToInt32(txbPrice.Text), DateTime.Now, txbDescription.Text, txbNote.Text, true, (bool)chkDone.IsChecked, (bool)chkCall.IsChecked, txbWorker.Content.ToString());
-
+                //Добавление квитанции
+                main.service.AddOrder(sb[0], sb[1], sb[2], txbPhone.Text, Convert.ToInt32(txbReceiptId.Text), cbReceiptType.Text, txbServiceType.Text, 
+                    Convert.ToInt32(txbPrice.Text), Convert.ToDateTime(txbDate.Text), txbDescription.Text, txbNote.Text, true, (bool)chkDone.IsChecked, 
+                    (bool)chkCall.IsChecked, txbWorker.Content.ToString());
             }
             else
             {
-                main.service.UpdateOrder(main.selectedOrderID, sb[0], sb[1], sb[2], txbPhone.Text, cbReceiptType.Text, txbServiceType.Text, Convert.ToInt32(txbPrice.Text), txbDescription.Text, txbNote.Text, true, (bool)chkDone.IsChecked, (bool)chkCall.IsChecked, txbWorker.Content.ToString());
+                main.service.UpdateOrder(main.selectedOrderID, sb[0], sb[1], sb[2], txbPhone.Text, Convert.ToInt32(txbReceiptId.Text), cbReceiptType.Text, 
+                    txbServiceType.Text, Convert.ToInt32(txbPrice.Text), txbDescription.Text, txbNote.Text, true, (bool)chkDone.IsChecked, 
+                    (bool)chkCall.IsChecked, txbWorker.Content.ToString());
             }
             main.RefreshOrders();
             this.Close();
