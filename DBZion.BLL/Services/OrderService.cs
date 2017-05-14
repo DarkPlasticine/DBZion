@@ -4,6 +4,7 @@ using DBZion.DAL.Interfaces;
 using DBZion.DAL.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
@@ -141,10 +142,12 @@ namespace DBZion.BLL.Services
         /// Возвращает список заказов.
         /// </summary>
         /// <returns></returns>
-        public List<Order> GetOrders()
+        public ObservableCollection<Order> GetOrders()
         {
-            return db.Orders.GetAll();
+            var orders = db.Orders.GetAll();
+            return new ObservableCollection<Order>(orders);
         }
+
 
         /// <summary>
         /// Возвращает список заказов по определенному условию.
@@ -152,18 +155,20 @@ namespace DBZion.BLL.Services
         /// </summary>
         /// <param name="predicate">Условие.</param>
         /// <returns></returns>
-        public List<Order> GetOrders(Func<Order, bool> predicate)
+        public ObservableCollection<Order> GetOrders(Func<Order, bool> predicate)
         {
-            return db.Orders.GetAll(predicate);
+            var orders = db.Orders.GetAll(predicate);
+            return new ObservableCollection<Order>(orders);
         }
 
         /// <summary>
         /// Возвращает список заказов.
         /// </summary>
         /// <returns></returns>
-        public async Task<List<Order>> GetOrdersAsync()
+        public async Task<ObservableCollection<Order>> GetOrdersAsync()
         {
-            return await db.Orders.GetAllAsync();
+            var orders = await db.Orders.GetAllAsync();
+            return new ObservableCollection<Order>(orders);
         }
 
         /// <summary>
@@ -172,9 +177,10 @@ namespace DBZion.BLL.Services
         /// </summary>
         /// <param name="predicate">Условие.</param>
         /// <returns></returns>
-        public async Task<List<Order>> GetOrdersAsync(Expression<Func<Order, bool>> predicate)
+        public async Task<ObservableCollection<Order>> GetOrdersAsync(Expression<Func<Order, bool>> predicate)
         {
-            return await db.Orders.GetAllAsync(predicate);
+            var orders = await db.Orders.GetAllAsync(predicate);
+            return new ObservableCollection<Order>(orders);
         }
 
         #endregion
