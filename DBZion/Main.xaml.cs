@@ -100,5 +100,49 @@ namespace DBZion
                 e.Row.Background = new SolidColorBrush(Colors.CornflowerBlue);
             }
         }
+
+        private void txbSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+           
+        }
+
+        private void txbSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox txt = (TextBox)sender;
+            string filter = txbSearch.Text;
+
+            System.ComponentModel.ICollectionView cv = CollectionViewSource.GetDefaultView(DataGridOrders.ItemsSource);
+
+            if (filter == "") cv.Filter = null;
+            else
+            {
+                cv.Filter = o => 
+                {
+                    DAL.Entities.Order p = o as DAL.Entities.Order;
+                    return p.ReceiptId.ToString().ToUpper().Contains(filter.ToUpper()) || 
+                           p.User.FullName.ToUpper().Contains(filter.ToUpper()) ||
+                           p.User.PhoneNumber.ToUpper().Contains(filter.ToUpper()) ||
+                           p.Worker.ToUpper().Contains(filter.ToUpper());
+                };
+            }
+        }
+
+        private void menuEdit_Click(object sender, RoutedEventArgs e)
+        {
+            var k = (DataGrid)e.OriginalSource;
+            selectedOrderID = ((DBZion.DAL.Entities.Order)k.SelectedItem).OrderId;
+
+            CreateReceiptWindow crw = new CreateReceiptWindow();
+            crw.Owner = this;
+            crw.Show();
+        }
+
+        private void DataGridOrders_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Right)
+            {
+                var h = DataGridOrders.InputHitTest(e.);
+            }
+        }
     }
 }

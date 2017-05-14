@@ -90,15 +90,18 @@ namespace DBZion
         private void buttonSave_Click(object sender, RoutedEventArgs e)
         {
             string[] sb = cbFullName.Text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
             if (isUpdating == false)
             {
                 //Добавление квитанции
+                
                 main.service.AddOrder(sb[0], sb[1], sb[2], txbPhone.Text, Convert.ToInt32(txbReceiptId.Text), cbReceiptType.Text, txbServiceType.Text, 
                     Convert.ToInt32(txbPrice.Text), Convert.ToDateTime(txbDate.Text), txbDescription.Text, txbNote.Text, true, (bool)chkDone.IsChecked, 
                     (bool)chkCall.IsChecked, txbWorker.Content.ToString());
             }
             else
             {
+                // Обновление уже созданной квитанции
                 main.service.UpdateOrder(main.selectedOrderID, sb[0], sb[1], sb[2], txbPhone.Text, Convert.ToInt32(txbReceiptId.Text), cbReceiptType.Text, 
                     txbServiceType.Text, Convert.ToInt32(txbPrice.Text), txbDescription.Text, txbNote.Text, true, (bool)chkDone.IsChecked, 
                     (bool)chkCall.IsChecked, txbWorker.Content.ToString());

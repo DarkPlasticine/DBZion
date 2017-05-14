@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:mask="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:DBZion"
         mc:Ignorable="d"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -70,12 +71,13 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <Button Style="{DynamicResource MaterialDesignToolButton}">
+                            <Button Style="{DynamicResource MaterialDesignToolButton}" x:Name="buttonSearch" >
                                 <material:PackIcon Kind="Magnify" Opacity=".56" />
                             </Button>
                             <TextBox Grid.Column="1" Margin="8 0 0 0" material:HintAssist.Hint="Поиск" 
                                      material:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0"
-                                     MinWidth="200" VerticalAlignment="Center" />
+                                     MinWidth="200" VerticalAlignment="Center" x:Name="txbSearch"
+                                     TextChanged="txbSearch_TextChanged"/>
                             <Button Style="{DynamicResource MaterialDesignToolButton}" Grid.Column="2" x:Name="btnSearch" Click="btnSearch_Click">
                                 <material:PackIcon Kind="Tune" Opacity=".56" Margin="8 0 0 0" />
                             </Button>
@@ -88,14 +90,21 @@
                       AutoGenerateColumns="False" material:DataGridAssist.CellPadding="13 8 8 8"
                       material:DataGridAssist.ColumnHeaderPadding="8" x:Name="DataGridOrders" 
                       PreviewMouseDoubleClick="DataGridOrders_PreviewMouseDoubleClick" SelectionMode="Single" 
-                      LoadingRow="DataGridOrders_LoadingRow" IsReadOnly="True" >
+                      LoadingRow="DataGridOrders_LoadingRow" IsReadOnly="True" 
+                      MouseDown="DataGridOrders_MouseDown">
                 <DataGrid.ContextMenu>
                     <ContextMenu>
+                        <MenuItem Header="Редактировать" x:Name="menuEdit">
+                            <MenuItem.Icon>
+                                <material:PackIcon Kind="TableEdit"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <MenuItem Header="Удалить" x:Name="menuDelete">
                             <MenuItem.Icon>
                                 <material:PackIcon Kind="Delete"/>
                             </MenuItem.Icon>
                         </MenuItem>
+                        
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
@@ -105,7 +114,7 @@
                     <material:MaterialDataGridTextColumn Binding="{Binding Price}" Header="Сумма" />
                     <material:MaterialDataGridTextColumn Binding="{Binding User.FullName}" Header="ФИО" />
                     <material:MaterialDataGridTextColumn Binding="{Binding OrderDate, StringFormat=\{0:dd.MM.yy HH:mm:ss\}}" Header="Дата" />
-                    <material:MaterialDataGridTextColumn Binding="{Binding User.PhoneNumber, StringFormat={}{0:8(###)###-####}}" Header="Телефон" />
+                    <material:MaterialDataGridTextColumn Binding="{Binding User.PhoneNumber}" Header="Телефон"/>
                     <material:MaterialDataGridTextColumn Binding="{Binding Description}" Header="Описание" />
                     <material:MaterialDataGridTextColumn Binding="{Binding Note}" Header="Комментарии" />
                 </DataGrid.Columns>
