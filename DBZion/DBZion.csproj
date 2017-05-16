@@ -112,10 +112,17 @@
     <Compile Include="ArhiveWindow.xaml.cs">
       <DependentUpon>ArhiveWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ContractWindow.xaml.cs">
+      <DependentUpon>ContractWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SearchWindow.xaml.cs">
       <DependentUpon>SearchWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="ArhiveWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ContractWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

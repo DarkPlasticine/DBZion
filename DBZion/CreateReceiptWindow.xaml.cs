@@ -162,5 +162,10 @@ namespace DBZion
             if (users.Count != 0)
                 cbFullName.ItemsSource = users;
         }
+
+        private void btnAgreement_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

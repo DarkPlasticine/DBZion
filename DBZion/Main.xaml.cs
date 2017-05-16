@@ -141,7 +141,7 @@ namespace DBZion
         {
             if (e.ChangedButton == MouseButton.Right)
             {
-                var h = DataGridOrders.InputHitTest(e.);
+                //var h = DataGridOrders.InputHitTest(e.);
             }
         }
     }
