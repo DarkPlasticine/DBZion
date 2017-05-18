@@ -65,10 +65,11 @@ namespace DBZion
                 }
                 else
                 {
-                    txbWorker.Content = main.CurrentUser;
+                    
                     cbFullName.ItemsSource = main.service.GetUsers().Select(p => p.FullName).ToList();
                     txbDate.Text = DateTime.Now.ToString();
                     txbReceiptId.Text = GetReceiptID(main.service.GetOrders(k => k.IsActive == true).ToDictionary(p => p.ReceiptId)).ToString();
+                    txbWorker.Text = main.CurrentUser;
                 }
             }
         }
@@ -97,14 +98,14 @@ namespace DBZion
                 
                 main.service.AddOrder(sb[0], sb[1], sb[2], txbPhone.Text, Convert.ToInt32(txbReceiptId.Text), cbReceiptType.Text, txbServiceType.Text, 
                     Convert.ToInt32(txbPrice.Text), Convert.ToDateTime(txbDate.Text), txbDescription.Text, txbNote.Text, true, (bool)chkDone.IsChecked, 
-                    (bool)chkCall.IsChecked, txbWorker.Content.ToString());
+                    (bool)chkCall.IsChecked, txbWorker.Text);
             }
             else
             {
                 // Обновление уже созданной квитанции
                 main.service.UpdateOrder(main.selectedOrderID, sb[0], sb[1], sb[2], txbPhone.Text, Convert.ToInt32(txbReceiptId.Text), cbReceiptType.Text, 
                     txbServiceType.Text, Convert.ToInt32(txbPrice.Text), txbDescription.Text, txbNote.Text, true, (bool)chkDone.IsChecked, 
-                    (bool)chkCall.IsChecked, txbWorker.Content.ToString());
+                    (bool)chkCall.IsChecked, txbWorker.Text);
             }
             main.RefreshOrders();
             this.Close();
@@ -165,7 +166,15 @@ namespace DBZion
 
         private void btnAgreement_Click(object sender, RoutedEventArgs e)
         {
+            var agreementWindow = new ContractWindow();
 
+            agreementWindow.Show();
+
+        }
+
+        private void cbReceiptType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            txbServiceType.Text = cbReceiptType.SelectedValue.ToString();
         }
     }
 }

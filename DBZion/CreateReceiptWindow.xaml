@@ -17,7 +17,7 @@
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         BorderThickness="1"
-        Title="Создание квитанции" Height="490" Width="320" Icon="zion_icon.ico" 
+        Title="Создание квитанции" Height="615" Width="320" Icon="zion_icon.ico" 
         WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow"
         ResizeMode="NoResize" Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded" >
     <Grid x:Name="gridOrder">
@@ -34,12 +34,13 @@
             </material:DialogHost.DialogContent>
         </material:DialogHost>-->
         <StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBox x:Name="txbReceiptId" Margin="0 0 16 0" Width="25" Text="{Binding Path=ReceiptId, Mode=OneWay}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 8">
+                <TextBox x:Name="txbReceiptId" Margin="0 0 16 0" Width="25" Text="{Binding Path=ReceiptId, Mode=OneWay}" 
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" material:HintAssist.Hint="№"/>
                 <ComboBox x:Name="cbFullName" material:HintAssist.Hint="ФИО" Width="235" 
                           IsEditable="True" TextSearch.TextPath=""
                           ItemsSource="{Binding}"  IsSynchronizedWithCurrentItem="True"
-                          
+                          Style="{StaticResource MaterialDesignFloatingHintComboBox}"
                           TextBoxBase.TextChanged="OnComboboxTextChanged"
                           Text="{Binding Path=User.FullName, Mode=OneWay}">
                     <ComboBox.ItemsPanel>
@@ -49,32 +50,30 @@
                     </ComboBox.ItemsPanel>
                 </ComboBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 8">
                 <material:PackIcon Kind="PhoneInTalk" Width="20" Height="20" VerticalAlignment="Center" Margin="0 0 5 0" Foreground="{Binding ElementName=txbPhone, Path=BorderBrush}"/>
-                <mask:MaskedTextBox Text="{Binding Path=User.PhoneNumber}" Mask="8(###)###-####" Style="{StaticResource MaterialDesignTextBox}" HorizontalAlignment="Center"
-                                material:TransitionAssist.DisableTransitions="True" Width="90" TextAlignment="Center" x:Name="txbPhone"/>
+                <mask:MaskedTextBox Text="{Binding Path=User.PhoneNumber}" Mask="8(###)###-####" HorizontalAlignment="Center" material:HintAssist.Hint="Телефон"
+                                    Width="90" TextAlignment="Center" x:Name="txbPhone" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
                 <CheckBox IsChecked="{Binding Path=Call}" Content="Позвонить" VerticalAlignment="Center"  Margin="75 0 0 0" x:Name="chkCall"/>
             </StackPanel>
-            <ComboBox x:Name="cbReceiptType" material:HintAssist.Hint="Тип Квитанции" Margin="18,0" SelectedValue="{Binding Path=ReceiptType}"></ComboBox>
-            <TextBox x:Name="txbServiceType" material:HintAssist.Hint="Вид обслуживания" Margin="18,0" Text="{Binding Path=ServiceType}"/>
-            <TextBox x:Name="txbDescription" material:HintAssist.Hint="Описание" Margin="18,0" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="90"
-                     VerticalScrollBarVisibility="Auto" 
-                     AcceptsReturn="True"                 
-                     SpellCheck.IsEnabled="True"
-                     Text="{Binding Path=Description}"/>
-            <TextBox x:Name="txbNote" material:HintAssist.Hint="Комментарии" Margin="18,0" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="90"
-                     VerticalScrollBarVisibility="Auto" 
-                     AcceptsReturn="True"                 
-                     SpellCheck.IsEnabled="True"
-                     Text="{Binding Path=Note}"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock x:Name="txbDate" Text="{Binding Path=OrderDate, Mode=OneWay}" VerticalAlignment="Center" Margin="0,0,45,0"/>
-                <Label Content="Принял:"/>
-                <Label x:Name="txbWorker" Content="{Binding Path=Worker}"/>
+            <ComboBox x:Name="cbReceiptType" material:HintAssist.Hint="Тип Квитанции" Margin="18 0 18 8" SelectedValue="{Binding Path=ReceiptType}" 
+                      Style="{StaticResource MaterialDesignFloatingHintComboBox}" SelectionChanged="cbReceiptType_SelectionChanged"/>
+            <TextBox x:Name="txbServiceType" material:HintAssist.Hint="Вид обслуживания" Margin="18 0 18 8" Text="{Binding Path=ServiceType}" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+            <TextBox x:Name="txbDescription" material:HintAssist.Hint="Описание" Margin="18 0 18 8" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="90"
+                     VerticalScrollBarVisibility="Auto" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     AcceptsReturn="True" SpellCheck.IsEnabled="True" Text="{Binding Path=Description}"/>
+            <TextBox x:Name="txbNote" material:HintAssist.Hint="Комментарии" Margin="18 0 18 8" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="90"
+                     VerticalScrollBarVisibility="Auto" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                     AcceptsReturn="True" SpellCheck.IsEnabled="True" Text="{Binding Path=Note}" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="18 0 18 8">
+                <TextBox x:Name="txbDate" Text="{Binding Path=OrderDate, Mode=OneWay}" VerticalAlignment="Center" Margin="0,0,45,0" material:HintAssist.Hint="Дата" 
+                           Style="{StaticResource MaterialDesignFloatingHintTextBox}" Width="120" IsEnabled="False"/>
+                <TextBox x:Name="txbWorker" Text="{Binding Path=Worker, Mode=OneWay}" VerticalAlignment="Center" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         material:HintAssist.Hint="Принял" Width="110" IsEnabled="False"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Label Content="Сумма:"/>
-                <TextBox x:Name="txbPrice" Width="222" Text="{Binding Path=Price}"/>
+                <TextBox x:Name="txbPrice" Width="275" Text="{Binding Path=Price}" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         material:HintAssist.Hint="Сумма"/>
             </StackPanel>
             <CheckBox x:Name="chkDone" Content="Готовность" VerticalAlignment="Center" Margin="17,8,0,0" IsChecked="{Binding Path=IsReady}"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

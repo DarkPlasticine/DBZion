@@ -10,7 +10,6 @@
         xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:dialogs="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
         dialogs:DialogParticipation.Register="{Binding}"
-        mc:Ignorable="d"
         GlowBrush="{DynamicResource AccentColorBrush}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -18,7 +17,7 @@
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         BorderThickness="1"
-        Title="Договор" Height="490" Width="320" Icon="zion_icon.ico" 
+        Title="Договор" Height="Auto" Width="620" Icon="zion_icon.ico" 
         WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow"
         >
     <Grid>
@@ -28,24 +27,57 @@
             <Button DockPanel.Dock="Bottom" x:Name="btnPrint" Click="btnPrint_Click">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <material:PackIcon Kind="Printer" VerticalAlignment="Center" Margin="0 0 8 0" Width="20" Height="20"/>
+                        <material:PackIcon Kind="Printer" VerticalAlignment="Center" Margin="0 0 8 0" Width="20" Height="20" />
                         <TextBlock Text="Печать"/>
                     </StackPanel>
                 </Button.Content>
             </Button>
+            <TextBox DockPanel.Dock="Bottom" Style="{StaticResource MaterialDesignFloatingHintTextBox}" material:HintAssist.Hint="Сумма" 
+                     Margin="18,0,18,8"/>
+            <TextBox DockPanel.Dock="Bottom" Style="{StaticResource MaterialDesignFloatingHintTextBox}" material:HintAssist.Hint="Комплектующие" 
+                     Margin="18,0,18,8" TextWrapping="Wrap" AcceptsReturn="True" Height="90"/>
+            
             <material:Card Background="{DynamicResource MaterialDesignBackground}" VerticalAlignment="Stretch" Padding="2" Margin="2">
                 <StackPanel>
-                    <Expander ExpandDirection="Down" IsExpanded="True" Header="Паспорт">
-
+                    <Expander ExpandDirection="Down" IsExpanded="True" Header="Паспорт" x:Name="expanderPassport" Expanded="expanderPassport_Expanded">
+                        <StackPanel>
+                            <GroupBox Header="Данные паспорта">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                        <TextBox x:Name="txbPassportSerial" TextAlignment="Center" Margin="18,0" Width="50" material:HintAssist.Hint="Серия" Style="{StaticResource MaterialDesignFloatingHintTextBox}" MaxLength="4"/>
+                                        <TextBox  x:Name="txbPassportNumber" TextAlignment="Center" Margin="0" Width="70" material:HintAssist.Hint="Номер" Style="{StaticResource MaterialDesignFloatingHintTextBox}" MaxLength="6"/>
+                                        <DatePicker x:Name="dpPassportDate" Margin="18,0" material:HintAssist.Hint="Дата выдачи" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" VerticalAlignment="Bottom"/>
+                                    </StackPanel>
+                                    <TextBox x:Name="txbPassportIssued" Margin="18,0" material:HintAssist.Hint="Кем выдан" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Height="72"
+                                     TextWrapping="Wrap" AcceptsReturn="True"/>
+                                </StackPanel>
+                            </GroupBox>
+                            <GroupBox Header="Место регистрации">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
+                                        <TextBox x:Name="txbPassportRegion" material:HintAssist.Hint="Регион" Width="250" Margin="18,0" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                                        <TextBox x:Name="txbPassportLocality" material:HintAssist.Hint="Пункт" Width="250" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
+                                        <TextBox x:Name="txbPassportDistrict" material:HintAssist.Hint="Район" Width="250" Margin="18,0" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                                        <TextBox x:Name="txbPassportStreet" material:HintAssist.Hint="Улица" Width="250" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <TextBox x:Name="txbPassportHouse" material:HintAssist.Hint="Дом" Margin="18,0" Width="40" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                                        <TextBox x:Name="txbPassportApartment" material:HintAssist.Hint="Квартира" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
                     </Expander>
-                    <Expander ExpandDirection="Down" IsExpanded="False" Header="Водительское удостовеение">
-
+                    <Expander ExpandDirection="Down" IsExpanded="False" Header="Водительское удостовеение" x:Name="expanderDrivers" Expanded="expanderDrivers_Expanded">
+                        <GroupBox></GroupBox>
                     </Expander>
-                    <Expander ExpandDirection="Down" IsExpanded="False" Header="Военный билет">
-
+                    <Expander ExpandDirection="Down" IsExpanded="False" Header="Военный билет" x:Name="expanderMilitary" Expanded="expanderMilitary_Expanded">
+                        <GroupBox></GroupBox>
                     </Expander>
-                    <Expander ExpandDirection="Down" IsExpanded="False" Header="Другое">
-
+                    <Expander ExpandDirection="Down" IsExpanded="False" Header="Другое" x:Name="expanderOther" Expanded="expanderOther_Expanded">
+                        <GroupBox></GroupBox>
                     </Expander>
                 </StackPanel>
             </material:Card>
