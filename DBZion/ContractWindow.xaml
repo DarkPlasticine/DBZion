@@ -39,6 +39,7 @@
             
             <material:Card Background="{DynamicResource MaterialDesignBackground}" VerticalAlignment="Stretch" Padding="2" Margin="2">
                 <StackPanel>
+                    <!--Паспорт-->
                     <Expander ExpandDirection="Down" IsExpanded="True" Header="Паспорт" x:Name="expanderPassport" Expanded="expanderPassport_Expanded">
                         <StackPanel>
                             <GroupBox Header="Данные паспорта">
@@ -70,11 +71,35 @@
                             </GroupBox>
                         </StackPanel>
                     </Expander>
+                    <!--Водительское удостоверение-->
                     <Expander ExpandDirection="Down" IsExpanded="False" Header="Водительское удостовеение" x:Name="expanderDrivers" Expanded="expanderDrivers_Expanded">
-                        <GroupBox></GroupBox>
+                        <GroupBox Header="Данные водительского удостоверения">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                    <TextBox x:Name="txbDriverSerial" TextAlignment="Center" Margin="18,0" Width="50" material:HintAssist.Hint="Серия" Style="{StaticResource MaterialDesignFloatingHintTextBox}" MaxLength="4"/>
+                                    <TextBox  x:Name="txbDriverNumber" TextAlignment="Center" Margin="0" Width="70" material:HintAssist.Hint="Номер" Style="{StaticResource MaterialDesignFloatingHintTextBox}" MaxLength="6"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                    <TextBox x:Name="txbDriverHouse" TextAlignment="Center" Margin="18,0" Width="150" material:HintAssist.Hint="Место жительства" Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                                    <DatePicker x:Name="dpDriverDate" Margin="18,0" material:HintAssist.Hint="Дата выдачи" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" VerticalAlignment="Bottom"/>
+                                    <DatePicker x:Name="dpDriverDateValid" Margin="18,0" material:HintAssist.Hint="Действительно до" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" VerticalAlignment="Bottom"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
                     </Expander>
+                    <!--Военный билет-->
                     <Expander ExpandDirection="Down" IsExpanded="False" Header="Военный билет" x:Name="expanderMilitary" Expanded="expanderMilitary_Expanded">
-                        <GroupBox></GroupBox>
+                        <GroupBox>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                    <TextBox x:Name="txbMilitarySerial" TextAlignment="Center" Margin="18,0" Width="50" material:HintAssist.Hint="Серия" Style="{StaticResource MaterialDesignFloatingHintTextBox}" MaxLength="2" />
+                                    <TextBox  x:Name="txbMilitaryNumber" TextAlignment="Center" Margin="0" Width="70" material:HintAssist.Hint="Номер" Style="{StaticResource MaterialDesignFloatingHintTextBox}" MaxLength="7"/>
+                                    <DatePicker x:Name="dpMilitaryDate" Margin="18,0" material:HintAssist.Hint="Дата выдачи" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" VerticalAlignment="Bottom"/>
+                                </StackPanel>
+                                <TextBox x:Name="txbMilitaryIssued" Margin="18,0" material:HintAssist.Hint="Выдан военным комиссариатом" Style="{StaticResource MaterialDesignFloatingHintTextBox}" Height="72"
+                                     TextWrapping="Wrap" AcceptsReturn="True"/>
+                            </StackPanel>
+                        </GroupBox>
                     </Expander>
                     <Expander ExpandDirection="Down" IsExpanded="False" Header="Другое" x:Name="expanderOther" Expanded="expanderOther_Expanded">
                         <GroupBox></GroupBox>
