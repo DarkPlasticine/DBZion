@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:mask="http://schemas.xceed.com/wpf/xaml/toolkit"
@@ -91,10 +92,11 @@
                       material:DataGridAssist.ColumnHeaderPadding="8" x:Name="DataGridOrders" 
                       PreviewMouseDoubleClick="DataGridOrders_PreviewMouseDoubleClick" SelectionMode="Single" 
                       LoadingRow="DataGridOrders_LoadingRow" IsReadOnly="True" 
-                      MouseDown="DataGridOrders_MouseDown">
+                      MouseRightButtonDown="DataGridOrders_MouseRightButtonDown"
+                      SelectionUnit="FullRow">
                 <DataGrid.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Редактировать" x:Name="menuEdit">
+                        <MenuItem Header="Редактировать" x:Name="menuEdit" Click="menuEdit_Click_1">
                             <MenuItem.Icon>
                                 <material:PackIcon Kind="TableEdit"/>
                             </MenuItem.Icon>

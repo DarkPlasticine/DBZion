@@ -34,6 +34,7 @@ namespace DBZion
         public Main(string user)
         {
             InitializeComponent();
+            this.MouseRightButtonUp += new MouseButtonEventHandler(DataGridOrders_MouseRightButtonDown);
             service = new OrderService(@"Data Source=Shpizpurgen-PC\SQLExpress;Initial Catalog=DataBaseZion;Integrated Security=True");
             this.Title = "ZION [" + user + "]";
             CurrentUser = user;
@@ -141,8 +142,63 @@ namespace DBZion
         {
             if (e.ChangedButton == MouseButton.Right)
             {
+              
                 //var h = DataGridOrders.InputHitTest(e.);
             }
+        }
+
+        private void DataGridOrders_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+           
+        }
+
+        //ICommand _command;
+
+        //public ICommand RemoveCommand
+        //{
+        //    get
+        //    {
+        //        if (_command == null)
+        //        {
+        //            _command = new DelegateCommandTT(CanExecute, DataGridOrders_MouseRightButtonDown);
+        //        }
+        //        return _command;
+        //    }
+        //}
+        //public class DelegateCommandTT : ICommand
+        //{ }
+
+        private void DataGridOrders_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DependencyObject dep = (DependencyObject)e.OriginalSource;
+            while ((dep != null) && !(dep is DataGridCell))
+            {
+                dep = VisualTreeHelper.GetParent(dep);
+            }
+            if (dep == null) return;
+
+            if (dep is DataGridCell)
+            {
+                DataGridCell cell = dep as DataGridCell;
+                cell.Focus();
+
+                while ((dep != null) && !(dep is DataGridRow))
+                {
+                    dep = VisualTreeHelper.GetParent(dep);
+                }
+                DataGridRow row = dep as DataGridRow;
+                DataGridOrders.SelectedItem = row.DataContext;
+            }
+        }
+      
+        private void menuEdit_Click_1(object sender, RoutedEventArgs e)
+        {
+            //var k = (DataGrid)sender;
+            selectedOrderID = ((DBZion.DAL.Entities.Order)DataGridOrders.SelectedItem).OrderId;
+
+            CreateReceiptWindow crw = new CreateReceiptWindow();
+            crw.Owner = this;
+            crw.Show();
         }
     }
 }
