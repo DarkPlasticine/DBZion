@@ -105,5 +105,18 @@ namespace DBZion
             }
 
         }
+
+        private void menuRestore_Click(object sender, RoutedEventArgs e)
+        {
+            var _order = (DBZion.DAL.Entities.Order)DataGridOrders.SelectedItem;
+            var _fullName = _order.User.FullName.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+
+            //main.service.UpdateOrder(_order.OrderId, _fullName[0], _fullName[1], _fullName[2], _order.User.PhoneNumber, _order.ReceiptId, _order.ReceiptType, _order.ServiceType, _order.Price, _order.Description, _order.Note, true, _order.IsReady, _order.Call, _order.Worker);
+        }
+
+        private void menuView_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
