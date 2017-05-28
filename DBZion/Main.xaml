@@ -35,16 +35,16 @@
                         </Button.Content>
                     </Button>
                     <!-- Активные квитанции -->
-                    <Button Style="{StaticResource MaterialDesignRaisedDarkButton}" x:Name="buttonActivity" Margin="0 0 16 0" Click="btnSearch_Click">
+                    <!--<Button Style="{StaticResource MaterialDesignRaisedDarkButton}" x:Name="buttonActivity" Margin="0 0 16 0" Click="btnSearch_Click">
                         <Button.Content>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <material:PackIcon Kind="Table" VerticalAlignment="Center" Margin="0 0 8 0" Width="20" Height="20"/>
                                 <TextBlock Text="Активные"/>
                             </StackPanel>
                         </Button.Content>
-                    </Button>
+                    </Button>-->
                     <!-- Хроника -->
-                    <Button Style="{StaticResource MaterialDesignRaisedDarkButton}" x:Name="buttonChronicle" Margin="0 0 16 0">
+                    <Button Style="{StaticResource MaterialDesignRaisedDarkButton}" x:Name="buttonChronicle" Margin="0 0 16 0" Click="btnSearch_Click">
                         <Button.Content>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <material:PackIcon Kind="CalendarClock" VerticalAlignment="Center" Margin="0 0 8 0" Width="20" Height="20"/>

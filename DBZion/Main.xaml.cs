@@ -50,13 +50,15 @@ namespace DBZion
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
-            var searchWindow = new SearchWindow();
+            SearchWindow searchWindow = new SearchWindow();
+            searchWindow.Owner = this;
             searchWindow.Show();
         }
 
         private void buttonArchive_Click(object sender, RoutedEventArgs e)
         {
-            var archivWindow = new ArhiveWindow();
+            ArhiveWindow archivWindow = new ArhiveWindow();
+            archivWindow.Owner = this;
             archivWindow.Show();
         }
 
@@ -138,35 +140,10 @@ namespace DBZion
             crw.Show();
         }
 
-        private void DataGridOrders_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Right)
-            {
-              
-                //var h = DataGridOrders.InputHitTest(e.);
-            }
-        }
-
         private void DataGridOrders_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
            
         }
-
-        //ICommand _command;
-
-        //public ICommand RemoveCommand
-        //{
-        //    get
-        //    {
-        //        if (_command == null)
-        //        {
-        //            _command = new DelegateCommandTT(CanExecute, DataGridOrders_MouseRightButtonDown);
-        //        }
-        //        return _command;
-        //    }
-        //}
-        //public class DelegateCommandTT : ICommand
-        //{ }
 
         private void DataGridOrders_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -193,7 +170,6 @@ namespace DBZion
       
         private void menuEdit_Click_1(object sender, RoutedEventArgs e)
         {
-            //var k = (DataGrid)sender;
             selectedOrderID = ((DBZion.DAL.Entities.Order)DataGridOrders.SelectedItem).OrderId;
 
             CreateReceiptWindow crw = new CreateReceiptWindow();
