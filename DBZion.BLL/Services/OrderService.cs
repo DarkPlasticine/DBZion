@@ -52,6 +52,26 @@ namespace DBZion.BLL.Services
             }
         }
 
+        //изменение параметра IsActive заказа
+        public void UpdateOrder(int id, bool isActive)
+        {
+            try
+            {
+                Order order = db.Orders.FindById(id);
+                order.IsActive = isActive;
+                db.Orders.Update(order);
+                db.Save();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw new Exception("Данный заказ ранее уже был изменен. \n" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ошибка при обновлении заказа \n" + ex.Message);
+            }
+        }
+
         // Обновление заказа в базе данных.
         public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, int receiptId, string receiptType,
                                 string serviceType, int price, string description, string note, bool isActive, bool isReady, bool call, string worker)
