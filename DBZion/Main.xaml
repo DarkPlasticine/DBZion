@@ -101,7 +101,7 @@
                                 <material:PackIcon Kind="TableEdit"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="Удалить" x:Name="menuDelete">
+                        <MenuItem Header="Удалить" x:Name="menuDelete" Click="menuDelete_Click">
                             <MenuItem.Icon>
                                 <material:PackIcon Kind="Delete"/>
                             </MenuItem.Icon>

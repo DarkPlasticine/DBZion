@@ -115,6 +115,9 @@
     <Compile Include="ContractWindow.xaml.cs">
       <DependentUpon>ContractWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ImportBD.xaml.cs">
+      <DependentUpon>ImportBD.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SearchWindow.xaml.cs">
       <DependentUpon>SearchWindow.xaml</DependentUpon>
     </Compile>
@@ -127,6 +130,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CreateReceiptWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ImportBD.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

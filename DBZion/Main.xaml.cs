@@ -176,5 +176,12 @@ namespace DBZion
             crw.Owner = this;
             crw.Show();
         }
+
+        private void menuDelete_Click(object sender, RoutedEventArgs e)
+        {
+            selectedOrderID = ((DAL.Entities.Order)DataGridOrders.SelectedItem).OrderId;
+            service.UpdateOrder(selectedOrderID, false);
+            RefreshOrders();
+        }
     }
 }

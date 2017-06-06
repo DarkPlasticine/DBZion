@@ -42,7 +42,7 @@ namespace DBZion
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            main = this.Owner as Main;
+            main = this.Owner as Main ;
             if (main != null)
             {
                 List<string> receiptTypes = new List<string> { "Услуги", "Тест Б/У", "Картридж" };
@@ -174,7 +174,10 @@ namespace DBZion
 
         private void cbReceiptType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            txbServiceType.Text = cbReceiptType.SelectedValue.ToString();
+            if (cbReceiptType.SelectedIndex != -1)
+            {
+                txbServiceType.Text = cbReceiptType.Items[cbReceiptType.SelectedIndex].ToString();
+            }
         }
     }
 }

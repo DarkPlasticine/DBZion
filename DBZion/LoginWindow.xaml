@@ -57,6 +57,7 @@
                         </StackPanel>
                     </Button.Content>
                 </Button>
+                <Button Content="Импортировать БД" Style="{DynamicResource MaterialDesignRaisedDarkButton}" x:Name="btnImport" Click="btnImport_Click" Margin="8 0 0 0"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" >
                 <material:PackIcon Kind="InformationOutline" material:ColorZoneAssist.Mode="Light" VerticalAlignment="Center"/>
