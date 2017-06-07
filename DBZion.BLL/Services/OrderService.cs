@@ -28,8 +28,31 @@ namespace DBZion.BLL.Services
         #region Работа с заказами
 
         // Добавление нового заказа в базу данных.
+        public void AddOrder(Order order)
+        {
+            using (var transaction = db.Database.BeginTransaction())
+            {
+                try
+                {
+                    //определяем, есть ли указанный пользователь в БД
+                    User user = FindUser(p => p.Surname == order.User.Surname && p.FirstName == order.User.FirstName && p.MiddleName == order.User.MiddleName && p.PhoneNumber == order.User.PhoneNumber);
+                    if (user != null)
+                        order.User = user;
+                    db.Orders.Add(order);
+                    db.Save();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception("Ошибка при добавлении заказа \n" + ex.Message);
+                }
+            }
+        }
+
+        // Добавление нового заказа в базу данных.
         public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, int receiptId, string receiptType,
-                             string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker)
+                         string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker)
         {
             using (var transaction = db.Database.BeginTransaction())
             {
