@@ -16,15 +16,20 @@ using System.Windows.Shapes;
 using System.Xml.Serialization;
 using DBZion.BLL.Services;
 using DBZion.DAL.Entities;
+using MahApps.Metro.Controls;
 
 namespace DBZion
 {
     /// <summary>
     /// Логика взаимодействия для ImportBD.xaml
     /// </summary>
-    public partial class ImportBD : Window
+    public partial class ImportBD : MetroWindow
     {
         protected internal OrderService service = null;
+        List<OldOrder> oldOrders = new List<OldOrder>();
+        int current = 0;
+        int full = 0;
+        string count = @"Импортированно: {0}/{1}";
         public ImportBD()
         {
             InitializeComponent();
@@ -33,13 +38,8 @@ namespace DBZion
 
         private void btnImport_Click(object sender, RoutedEventArgs e)
         {
-            List<OldOrder> oldOrders = new List<OldOrder>();
-            XmlSerializer formatter = new XmlSerializer(typeof(List<OldOrder>));
-
-            using (FileStream fs = new FileStream(txbPath.Text, FileMode.OpenOrCreate))
-            {
-                oldOrders = (List<OldOrder>)formatter.Deserialize(fs);
-            }
+           // List<OldOrder> oldOrders = new List<OldOrder>();
+            
 
             foreach(OldOrder o in oldOrders)
             {
@@ -66,7 +66,7 @@ namespace DBZion
                    Worker = o.Worker
                 };
 
-               // service.AddOrder(_order);
+                service.AddOrder(_order);
             }
         }
 
@@ -78,6 +78,26 @@ namespace DBZion
             {
                 txbPath.Text = dialog.FileName;
             }
+
+            oldOrders.Clear();
+            try
+            {
+                XmlSerializer formatter = new XmlSerializer(typeof(List<OldOrder>));
+
+                using (FileStream fs = new FileStream(txbPath.Text, FileMode.OpenOrCreate))
+                {
+                    oldOrders = (List<OldOrder>)formatter.Deserialize(fs);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            pbProress.Maximum = full = oldOrders.Count;
+
+            lblProgress.Content = String.Format(count, current, full);
+            
         }
 
         [Serializable]

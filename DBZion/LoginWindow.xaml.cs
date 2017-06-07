@@ -42,7 +42,9 @@ namespace DBZion
 
         private void btnImport_Click(object sender, RoutedEventArgs e)
         {
-
+            ImportBD importBDWindow = new ImportBD();
+            importBDWindow.Owner = this;
+            importBDWindow.Show();
         }
     }
 }
