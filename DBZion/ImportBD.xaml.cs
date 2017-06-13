@@ -57,6 +57,12 @@ namespace DBZion
             foreach (OldOrder o in oldOrders)
             {
                 string[] u = o.FullName.Split(new char[] { ' ', '.' }, StringSplitOptions.RemoveEmptyEntries);
+                if (o.PhoneNumber == null)
+                    o.PhoneNumber = "";
+
+                if (o.ServiceType == "")
+                    o.ServiceType = o.ReceiptType;
+
                 Order _order = new Order()
                 {
                     Call = o.Call,
@@ -68,23 +74,18 @@ namespace DBZion
                     Price = o.Price,
                     ReceiptId = o.ReceiptID,
                     ReceiptType = o.ReceiptType,
-                   // ServiceType = o.ServiceType,
+                    ServiceType = o.ServiceType,
                     User = new User()
                     {
                         PhoneNumber = o.PhoneNumber
                     },
                     Worker = o.Worker
                 };
-
-                if (o.ServiceType == "")
-                    _order.ServiceType = o.ReceiptType;
-                else
-                    _order.ServiceType = o.ServiceType;
                
                 switch (u.Count())
                 {
-                    case 1: _order.User.Surname = u[0]; _order.User.FirstName = "-"; _order.User.MiddleName = "-"; break;
-                    case 2: _order.User.FirstName = u[1]; _order.User.Surname = u[0]; _order.User.MiddleName = "-"; break;
+                    case 1: _order.User.Surname = u[0]; _order.User.FirstName = "Аноним"; _order.User.MiddleName = "Анонимович"; break;
+                    case 2: _order.User.FirstName = u[1]; _order.User.Surname = u[0]; _order.User.MiddleName = "Анонимович"; break;
                     case 3: _order.User.FirstName = u[1]; _order.User.Surname = u[0]; _order.User.MiddleName = u[2]; break;
                     default: _order.User.FirstName = "Аноним"; _order.User.Surname = "Анонимов"; _order.User.MiddleName = "Анонимович"; break;
                 }
