@@ -12,6 +12,7 @@ namespace DBZion.BLL.Interfaces
         void AddOrder(Order order);
         void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, int receiptId, string receiptType, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker);
         void UpdateOrder(int id, bool isActive);
+        void UpdateOrder(int id, Order order);
         void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, int receiptId, string receiptType, string serviceType, int price, string description, string note, bool isActive, bool isReady, bool call, string worker);
 
         ObservableCollection<Order> GetOrders();
