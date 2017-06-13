@@ -209,9 +209,10 @@
     <Resource Include="Logo_Zion.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Data\Users.xml">
+    <Content Include="Data\Users.xml">
       <SubType>Designer</SubType>
-    </Resource>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">

@@ -38,12 +38,25 @@ namespace DBZion
 
         private void btnImport_Click(object sender, RoutedEventArgs e)
         {
-           // List<OldOrder> oldOrders = new List<OldOrder>();
-            
+            // List<OldOrder> oldOrders = new List<OldOrder>();
+            //oldOrders.Clear();
+            //try
+            //{
+            //    XmlSerializer formatter = new XmlSerializer(typeof(List<OldOrder>));
 
-            foreach(OldOrder o in oldOrders)
+            //    using (FileStream fs = new FileStream(txbPath.Text, FileMode.OpenOrCreate, FileAccess.Read))
+            //    {
+            //        oldOrders = (List<OldOrder>)formatter.Deserialize(fs);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
+
+            foreach (OldOrder o in oldOrders)
             {
-                string[] u = o.FullName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] u = o.FullName.Split(new char[] { ' ', '.' }, StringSplitOptions.RemoveEmptyEntries);
                 Order _order = new Order()
                 {
                     Call = o.Call,
@@ -58,16 +71,23 @@ namespace DBZion
                     ServiceType = o.ServiceType,
                     User = new User()
                     {
-                        FirstName = u[1],
-                        MiddleName = u[2],
-                        Surname = u[0],
                         PhoneNumber = o.PhoneNumber
                     },
-                   Worker = o.Worker
+                    Worker = o.Worker
                 };
+               
+                switch (u.Count())
+                {
+                    case 1: _order.User.Surname = u[0]; break;
+                    case 2: _order.User.FirstName = u[1]; _order.User.Surname = u[0]; _order.User.MiddleName = ""; break;
+                    case 3: _order.User.FirstName = u[1]; _order.User.Surname = u[0]; _order.User.MiddleName = u[2]; break;
+                    default: _order.User.FirstName = "Аноним"; _order.User.Surname = "Анонимов"; _order.User.MiddleName = "Анонимович"; break;
+                }
 
-                service.AddOrder(_order);
+                //   service.AddOrder(_order);
             }
+
+            MessageBox.Show("OK");
         }
 
         private void btnPath_Click(object sender, RoutedEventArgs e)
@@ -84,7 +104,7 @@ namespace DBZion
             {
                 XmlSerializer formatter = new XmlSerializer(typeof(List<OldOrder>));
 
-                using (FileStream fs = new FileStream(txbPath.Text, FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream(txbPath.Text, FileMode.Open))
                 {
                     oldOrders = (List<OldOrder>)formatter.Deserialize(fs);
                 }
@@ -93,11 +113,8 @@ namespace DBZion
             {
                 MessageBox.Show(ex.Message);
             }
-
             pbProress.Maximum = full = oldOrders.Count;
-
             lblProgress.Content = String.Format(count, current, full);
-            
         }
 
         [Serializable]

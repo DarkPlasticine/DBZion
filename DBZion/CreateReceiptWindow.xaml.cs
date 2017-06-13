@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using MaterialDesignThemes.Wpf;
 using DBZion.BLL.Services;
+using DBZion.DAL.Entities;
 
 namespace DBZion
 {
@@ -35,8 +36,12 @@ namespace DBZion
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            //var sampleMessageDialog = new SampleMessageDialog
+            //{
+            //    Message = { Text = ((ButtonBase)sender).Content.ToString() }
+            //};
             //this.PopupAddCustom.IsOpen = true;
-
+            //DialogHost.Show(sender, closingEventHandler);
 
         }
 
@@ -90,19 +95,43 @@ namespace DBZion
 
         private void buttonSave_Click(object sender, RoutedEventArgs e)
         {
-            string[] sb = cbFullName.Text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] sb = cbFullName.Text.Split(new char[] { ' ', '.' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (isUpdating == false)
             {
                 //Добавление квитанции
-                
-                main.service.AddOrder(sb[0], sb[1], sb[2], txbPhone.Text, Convert.ToInt32(txbReceiptId.Text), cbReceiptType.Text, txbServiceType.Text, 
-                    Convert.ToInt32(txbPrice.Text), Convert.ToDateTime(txbDate.Text), txbDescription.Text, txbNote.Text, true, (bool)chkDone.IsChecked, 
-                    (bool)chkCall.IsChecked, txbWorker.Text);
+                Order _order = new Order()
+                {
+                    Call = (bool)chkCall.IsChecked,
+                    Description = txbDescription.Text,
+                    IsActive = true,
+                    IsReady = (bool)chkDone.IsChecked,
+                    Note = txbNote.Text,
+                    OrderDate = Convert.ToDateTime(txbDate.Text),
+                    Price = Convert.ToInt32(txbPrice),
+                    ReceiptId = Convert.ToInt32(txbReceiptId.Text),
+                    ReceiptType = cbReceiptType.Text,
+                    ServiceType = txbServiceType.Text,
+                    Worker = txbWorker.Text,
+                    User = new User
+                    {
+                        Surname = sb[0],
+                        FirstName = sb[1],
+                        MiddleName = sb[2],
+                        PhoneNumber = txbPhone.Text
+                    }
+                  
+                };
+
+                main.service.AddOrder(_order);
+                //main.service.AddOrder(sb[0], sb[1], sb[2], txbPhone.Text, Convert.ToInt32(txbReceiptId.Text), cbReceiptType.Text, txbServiceType.Text, 
+                //    Convert.ToInt32(txbPrice.Text), Convert.ToDateTime(txbDate.Text), txbDescription.Text, txbNote.Text, true, (bool)chkDone.IsChecked, 
+                //    (bool)chkCall.IsChecked, txbWorker.Text);
             }
             else
             {
                 // Обновление уже созданной квитанции
+                
                 main.service.UpdateOrder(main.selectedOrderID, sb[0], sb[1], sb[2], txbPhone.Text, Convert.ToInt32(txbReceiptId.Text), cbReceiptType.Text, 
                     txbServiceType.Text, Convert.ToInt32(txbPrice.Text), txbDescription.Text, txbNote.Text, true, (bool)chkDone.IsChecked, 
                     (bool)chkCall.IsChecked, txbWorker.Text);
