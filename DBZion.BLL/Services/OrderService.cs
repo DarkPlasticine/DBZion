@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -41,6 +43,18 @@ namespace DBZion.BLL.Services
                     db.Orders.Add(order);
                     db.Save();
                     transaction.Commit();
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    foreach (DbEntityValidationResult validationError in ex.EntityValidationErrors)
+                    {
+                        Debug.Write("Object: " + validationError.Entry.Entity.ToString());
+                        Debug.Write(" ");
+                        foreach (DbValidationError err in validationError.ValidationErrors)
+                        {
+                            Debug.Write(err.ErrorMessage + " ");
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
