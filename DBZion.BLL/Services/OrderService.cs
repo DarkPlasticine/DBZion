@@ -252,6 +252,37 @@ namespace DBZion.BLL.Services
         }
 
         /// <summary>
+        /// Изменяет пользователя в базе данных.
+        /// </summary>
+        /// <param name="id">Id пользователя</param>
+        /// <param name="surname">Фамилия</param>
+        /// <param name="firstName">Имя</param>
+        /// <param name="middleName">Отчество</param>
+        /// <param name="phoneNumber">Номер телефона</param>
+        public void UpdateUser(int id, string surname, string firstName, string middleName, string phoneNumber)
+        {
+            try
+            {
+                User user = db.Users.FindById(id);
+                user.Surname = surname;
+                user.FirstName = firstName;
+                user.MiddleName = middleName;
+                user.PhoneNumber = phoneNumber;
+
+                db.Users.Update(user);
+                db.Save();
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                throw new Exception("Данные указанного пользователя были изменены ранее");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ошибка при изменении пользователя \n" + ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Находит пользователя по ID.
         /// </summary>
         /// <param name="id">ID.</param>
