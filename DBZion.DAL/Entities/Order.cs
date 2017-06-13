@@ -21,7 +21,7 @@ namespace DBZion.DAL.Entities
         public string ServiceType { get; set; }
 
         [Required]
-        [Range(1, 999999)]
+        [Range(0, 999999)]
         public int Price { get; set; }
 
         [Required]

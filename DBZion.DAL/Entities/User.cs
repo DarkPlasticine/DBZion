@@ -21,7 +21,6 @@ namespace DBZion.DAL.Entities
         [StringLength(20)]
         public string MiddleName { get; set; }
 
-        [Required]
         [StringLength(20)]
         public string PhoneNumber { get; set; }
 

@@ -101,6 +101,9 @@ namespace DBZion.BLL.Services
             try
             {
                 Order oldOrder = db.Orders.FindById(id);
+                User user = FindUser(p => p.Surname == order.User.Surname && p.FirstName == order.User.FirstName && p.MiddleName == order.User.MiddleName && p.PhoneNumber == order.User.PhoneNumber);
+                if (user != null)
+                    order.User = user;
                 oldOrder = order;
                 db.Orders.Update(oldOrder);
                 db.Save();
