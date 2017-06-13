@@ -23,15 +23,13 @@ namespace DBZion
     /// </summary>
     public partial class CreateReceiptWindow : MetroWindow
     {
-        private static DBZion.DAL.Entities.Order order = null;
+        private static Order order = null;
         private bool isUpdating = false;
         Main main = null;
 
         public CreateReceiptWindow()
         {
             InitializeComponent();
-           
-            
         }
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -42,7 +40,6 @@ namespace DBZion
             //};
             //this.PopupAddCustom.IsOpen = true;
             //DialogHost.Show(sender, closingEventHandler);
-
         }
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
@@ -55,8 +52,6 @@ namespace DBZion
                 isUpdating = false;
 
                 cbReceiptType.ItemsSource = receiptTypes;
-
-                
 
                 if (main.selectedOrderID != 0)
                 {
@@ -97,32 +92,32 @@ namespace DBZion
         {
             string[] sb = cbFullName.Text.Split(new char[] { ' ', '.' }, StringSplitOptions.RemoveEmptyEntries);
 
+            Order _order = new Order()
+            {
+                Call = (bool)chkCall.IsChecked,
+                Description = txbDescription.Text,
+                IsActive = true,
+                IsReady = (bool)chkDone.IsChecked,
+                Note = txbNote.Text,
+                OrderDate = Convert.ToDateTime(txbDate.Text),
+                Price = Convert.ToInt32(txbPrice),
+                ReceiptId = Convert.ToInt32(txbReceiptId.Text),
+                ReceiptType = cbReceiptType.Text,
+                ServiceType = txbServiceType.Text,
+                Worker = txbWorker.Text,
+                User = new User
+                {
+                    Surname = sb[0],
+                    FirstName = sb[1],
+                    MiddleName = sb[2],
+                    PhoneNumber = txbPhone.Text
+                }
+
+            };
+
             if (isUpdating == false)
             {
                 //Добавление квитанции
-                Order _order = new Order()
-                {
-                    Call = (bool)chkCall.IsChecked,
-                    Description = txbDescription.Text,
-                    IsActive = true,
-                    IsReady = (bool)chkDone.IsChecked,
-                    Note = txbNote.Text,
-                    OrderDate = Convert.ToDateTime(txbDate.Text),
-                    Price = Convert.ToInt32(txbPrice),
-                    ReceiptId = Convert.ToInt32(txbReceiptId.Text),
-                    ReceiptType = cbReceiptType.Text,
-                    ServiceType = txbServiceType.Text,
-                    Worker = txbWorker.Text,
-                    User = new User
-                    {
-                        Surname = sb[0],
-                        FirstName = sb[1],
-                        MiddleName = sb[2],
-                        PhoneNumber = txbPhone.Text
-                    }
-                  
-                };
-
                 main.service.AddOrder(_order);
                 //main.service.AddOrder(sb[0], sb[1], sb[2], txbPhone.Text, Convert.ToInt32(txbReceiptId.Text), cbReceiptType.Text, txbServiceType.Text, 
                 //    Convert.ToInt32(txbPrice.Text), Convert.ToDateTime(txbDate.Text), txbDescription.Text, txbNote.Text, true, (bool)chkDone.IsChecked, 
@@ -131,10 +126,10 @@ namespace DBZion
             else
             {
                 // Обновление уже созданной квитанции
-                
-                main.service.UpdateOrder(main.selectedOrderID, sb[0], sb[1], sb[2], txbPhone.Text, Convert.ToInt32(txbReceiptId.Text), cbReceiptType.Text, 
-                    txbServiceType.Text, Convert.ToInt32(txbPrice.Text), txbDescription.Text, txbNote.Text, true, (bool)chkDone.IsChecked, 
-                    (bool)chkCall.IsChecked, txbWorker.Text);
+                main.service.UpdateOrder(main.selectedOrderID, _order);
+                //main.service.UpdateOrder(main.selectedOrderID, sb[0], sb[1], sb[2], txbPhone.Text, Convert.ToInt32(txbReceiptId.Text), cbReceiptType.Text, 
+                //    txbServiceType.Text, Convert.ToInt32(txbPrice.Text), txbDescription.Text, txbNote.Text, true, (bool)chkDone.IsChecked, 
+                //    (bool)chkCall.IsChecked, txbWorker.Text);
             }
             main.RefreshOrders();
             this.Close();
@@ -157,10 +152,9 @@ namespace DBZion
 
         private void cbFullName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-           
-                var user = main.service.FindUser(p => p.FullName == cbFullName.Text);
-                if (user != null)
-                    txbPhone.Text = user.PhoneNumber;
+            var user = main.service.FindUser(p => p.FullName == cbFullName.Text);
+            if (user != null)
+                txbPhone.Text = user.PhoneNumber;
         }
 
         private void cbFullName_KeyDown(object sender, KeyEventArgs e)
