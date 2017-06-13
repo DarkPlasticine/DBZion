@@ -26,6 +26,7 @@ namespace DBZion.BLL.Interfaces
 
 
         void AddUser(string surname, string firstName, string middleName, string phoneNumber);
+        void UpdateUser(int id, string surname, string firstName, string middleName, string phoneNumber);
 
         User FindUser(int id);
         User FindUser(Func<User, bool> predicate);
