@@ -25,6 +25,11 @@ namespace DBZion.BLL.Services
         public OrderService(string connectionString)
         {
             db = new EFUnitOfWork(connectionString);
+            if (!db.Database.Exists())
+            {
+                db.Dispose();
+                throw new Exception("Ошибка подключения к базе даныых");
+            }
         }
 
         #region Работа с заказами
