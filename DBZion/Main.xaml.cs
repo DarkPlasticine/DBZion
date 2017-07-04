@@ -76,7 +76,7 @@ namespace DBZion
         {
             //int id = Convert.ToInt32(orderID);
             var k = (DataGrid)sender;
-            selectedOrderID = ((DBZion.DAL.Entities.Order)k.SelectedItem).OrderId;
+            selectedOrderID = ((DAL.Entities.Order)k.SelectedItem).OrderId;
 
             CreateReceiptWindow crw = new CreateReceiptWindow();
             crw.Owner = this;
@@ -170,7 +170,7 @@ namespace DBZion
       
         private void menuEdit_Click_1(object sender, RoutedEventArgs e)
         {
-            selectedOrderID = ((DBZion.DAL.Entities.Order)DataGridOrders.SelectedItem).OrderId;
+            selectedOrderID = ((DAL.Entities.Order)DataGridOrders.SelectedItem).OrderId;
 
             CreateReceiptWindow crw = new CreateReceiptWindow();
             crw.Owner = this;
@@ -181,6 +181,15 @@ namespace DBZion
         {
             selectedOrderID = ((DAL.Entities.Order)DataGridOrders.SelectedItem).OrderId;
             service.UpdateOrder(selectedOrderID, false);
+            RefreshOrders();
+        }
+
+        private void menuComplete_Click(object sender, RoutedEventArgs e)
+        {
+            selectedOrderID = ((DAL.Entities.Order)DataGridOrders.SelectedItem).OrderId;
+            var order = service.GetOrders(p => p.OrderId == selectedOrderID).FirstOrDefault();
+            order.IsReady = true;
+            service.UpdateOrder(selectedOrderID, order);
             RefreshOrders();
         }
     }

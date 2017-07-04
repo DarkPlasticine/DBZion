@@ -19,7 +19,7 @@
         BorderThickness="1"
         Title="Создание квитанции" Height="615" Width="320" Icon="zion_icon.ico" 
         WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow"
-        ResizeMode="NoResize" Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded" >
+        ResizeMode="CanResizeWithGrip" Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded" >
     <Grid x:Name="gridOrder">
         <!--<material:DialogHost Name="PopupAddCustom" HorizontalAlignment="Center" VerticalAlignment="Center" IsOpen="False" >
             <material:DialogHost.DialogContent>
@@ -66,7 +66,7 @@
                      VerticalScrollBarVisibility="Auto" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                      AcceptsReturn="True" SpellCheck.IsEnabled="True" Text="{Binding Path=Note}" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="18 0 18 8">
-                <TextBox x:Name="txbDate" Text="{Binding Path=OrderDate, Mode=OneWay}" VerticalAlignment="Center" Margin="0,0,45,0" material:HintAssist.Hint="Дата" 
+                <TextBox x:Name="txbDate" Text="{Binding Path=OrderDate, StringFormat=\{0:dd.MM.yy HH:mm:ss\}, Mode=OneWay}" VerticalAlignment="Center" Margin="0,0,45,0" material:HintAssist.Hint="Дата" 
                            Style="{StaticResource MaterialDesignFloatingHintTextBox}" Width="120" IsEnabled="False"/>
                 <TextBox x:Name="txbWorker" Text="{Binding Path=Worker, Mode=OneWay}" VerticalAlignment="Center" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                          material:HintAssist.Hint="Принял" Width="110" IsEnabled="False"/>

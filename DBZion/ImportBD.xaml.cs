@@ -57,11 +57,21 @@ namespace DBZion
             foreach (OldOrder o in oldOrders)
             {
                 string[] u = o.FullName.Split(new char[] { ' ', '.' }, StringSplitOptions.RemoveEmptyEntries);
-                if (o.PhoneNumber == null)
-                    o.PhoneNumber = "";
+                //if (o.PhoneNumber == null)
+                //    o.PhoneNumber = "8(800)555-3535";
 
-                if (o.ServiceType == "")
+                if (o.ServiceType == "" )
                     o.ServiceType = o.ReceiptType;
+                if (o.ServiceType.Length > 20)
+                {
+                    o.Description = o.Description + "\n" + o.ServiceType;
+                    o.ServiceType = o.ReceiptType;
+                }
+                if (o.Description == "" || o.Description == null)
+                    o.Description = "no description";
+
+                if (o.Worker == "" || o.Worker == null)
+                    o.Worker = "admin";
 
                 Order _order = new Order()
                 {

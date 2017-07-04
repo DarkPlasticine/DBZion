@@ -53,11 +53,20 @@
                         </Button.Content>
                     </Button>
                     <!-- Архив -->
-                    <Button Style="{StaticResource MaterialDesignRaisedDarkButton}" x:Name="buttonArchive" Click="buttonArchive_Click">
+                    <Button Style="{StaticResource MaterialDesignRaisedDarkButton}" x:Name="buttonArchive"  Margin="0 0 16 0"  Click="buttonArchive_Click">
                         <Button.Content>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <material:PackIcon Kind="Archive" VerticalAlignment="Center" Margin="0 0 8 0" Width="20" Height="20"/>
                                 <TextBlock Text="Архив"/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                    <!-- Редактирование клиентов -->
+                    <Button Style="{StaticResource MaterialDesignRaisedDarkButton}" x:Name="buttonEditClient" Click="buttonArchive_Click">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <material:PackIcon Kind="Account" VerticalAlignment="Center" Margin="0 0 8 0" Width="20" Height="20"/>
+                                <TextBlock Text="Редактирование клиентов"/>
                             </StackPanel>
                         </Button.Content>
                     </Button>
@@ -94,8 +103,14 @@
                       LoadingRow="DataGridOrders_LoadingRow" IsReadOnly="True" 
                       MouseRightButtonDown="DataGridOrders_MouseRightButtonDown"
                       SelectionUnit="FullRow">
+               
                 <DataGrid.ContextMenu>
                     <ContextMenu>
+                        <MenuItem Header="Готово" x:Name="menuComplete" Click="menuComplete_Click">
+                            <MenuItem.Icon>
+                                <material:PackIcon Kind="Check"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <MenuItem Header="Редактировать" x:Name="menuEdit" Click="menuEdit_Click_1">
                             <MenuItem.Icon>
                                 <material:PackIcon Kind="TableEdit"/>
@@ -117,8 +132,22 @@
                     <material:MaterialDataGridTextColumn Binding="{Binding User.FullName}" Header="ФИО" />
                     <material:MaterialDataGridTextColumn Binding="{Binding OrderDate, StringFormat=\{0:dd.MM.yy HH:mm:ss\}}" Header="Дата" />
                     <material:MaterialDataGridTextColumn Binding="{Binding User.PhoneNumber}" Header="Телефон"/>
-                    <material:MaterialDataGridTextColumn Binding="{Binding Description}" Header="Описание" />
-                    <material:MaterialDataGridTextColumn Binding="{Binding Note}" Header="Комментарии" />
+                    <material:MaterialDataGridTextColumn Binding="{Binding Description}" Header="Описание" >
+                        <material:MaterialDataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="MaxHeight" Value="18"/>
+                            </Style>
+                        </material:MaterialDataGridTextColumn.ElementStyle>
+                    </material:MaterialDataGridTextColumn>
+                    <material:MaterialDataGridTextColumn Binding="{Binding Note}" Header="Комментарии" >
+                        <material:MaterialDataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="MaxHeight" Value="18"/>
+                            </Style>
+                        </material:MaterialDataGridTextColumn.ElementStyle>
+                    </material:MaterialDataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>

@@ -65,6 +65,7 @@ namespace DBZion
             {
                 var orders = main.service.GetOrders();
                 DataGridOrders.ItemsSource = orders;
+                MessageBox.Show(orders.Count.ToString());
             }
 
         }
