@@ -132,7 +132,7 @@ namespace DBZion
             }
             catch (Exception ex)
             {
-                MessageBox.Show("");
+                MessageBox.Show(ex.Message);
             }
         }
 

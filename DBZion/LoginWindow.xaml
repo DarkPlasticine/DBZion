@@ -59,10 +59,17 @@
                 </Button>
                 <Button Content="Импортировать БД" Style="{DynamicResource MaterialDesignRaisedDarkButton}" x:Name="btnImport" Click="btnImport_Click" Margin="8 0 0 0" Visibility="Visible"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right" >
-                <material:PackIcon Kind="InformationOutline" material:ColorZoneAssist.Mode="Light" VerticalAlignment="Center"/>
-                <Label x:Name="labelVersion" VerticalAlignment="Center"/>
-            </StackPanel>
+            
+            <DockPanel VerticalAlignment="Center">
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" DockPanel.Dock="Left">
+                    <material:PackIcon Kind="CheckboxBlankCircle" HorizontalAlignment="Left" Foreground="Red" x:Name="statusServer" VerticalAlignment="Center"/>
+                    <Label Content="Статус сервера" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" DockPanel.Dock="Right">
+                    <material:PackIcon Kind="InformationOutline" material:ColorZoneAssist.Mode="Light" VerticalAlignment="Center"/>
+                    <Label x:Name="labelVersion" VerticalAlignment="Center" />
+                </StackPanel>
+            </DockPanel>
         </StackPanel>
     </Grid>
 </metro:MetroWindow>

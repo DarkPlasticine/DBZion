@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
+using System.IO;
+using System.Xml.Linq;
 
 namespace DBZion
 {
@@ -20,6 +22,8 @@ namespace DBZion
     /// </summary>
     public partial class ContractWindow : MetroWindow
     {
+        private string contract;
+
         public ContractWindow()
         {
             InitializeComponent();
@@ -27,7 +31,24 @@ namespace DBZion
 
         private void btnPrint_Click(object sender, RoutedEventArgs e)
         {
+            FlowDocument document = new FlowDocument();
+            TextRange txtRange = null;
+            GetPath();
 
+            byte[] file = File.ReadAllBytes(contract);
+
+            using (MemoryStream stream = new MemoryStream(file))
+            {
+                // create a TextRange around the entire document
+                txtRange = new TextRange(document.ContentStart, document.ContentEnd);
+                txtRange.Load(stream, DataFormats.Rtf);
+            }
+
+            if (expanderPassport.IsExpanded == true)
+            {
+                string str = String.Format("Паспорт серия {0} номер {1}, дата выдачи {2} {3}", txbPassportSerial.Text, txbPassportNumber.Text, dpPassportDate.Text, txbPassportIssued.Text);
+                txtRange.Text.Replace("#001", str);
+            }
         }
 
         private void expanderPassport_Expanded(object sender, RoutedEventArgs e)
@@ -73,5 +94,16 @@ namespace DBZion
                 expanderPassport.IsExpanded = false;
             }
         }
+
+        private void GetPath()
+        {
+            XDocument settings = XDocument.Load(Environment.CurrentDirectory + @"/Data/Settings.xml");
+            foreach (XElement el in settings.Root.Elements())
+            {
+                if (el.Name == "contract")
+                    contract = el.Attribute("path").Value;
+            }
+        }
+
     }
 }

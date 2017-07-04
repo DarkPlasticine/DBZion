@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<setting>
+  <connectionString name="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=\\Server\Base\DataBaseZion.mdf;Integrated Security=True;Connect Timeout=30"/>
+  <status name="\\Server\Base\status.txt"/>
+  <contract path="\\Server\Base\1.rtf"/>
+  <test path="\\Server\Base\1.xlsx"/>
+  <services path="\\Server\Base\2.xlsx"/>
+  <cartridge path="\\Server\Base\3.xlsx"/>
+</setting>

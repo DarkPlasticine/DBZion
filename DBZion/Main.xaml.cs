@@ -30,12 +30,11 @@ namespace DBZion
         protected internal OrderService service = null;
         protected internal int selectedOrderID = 0;
 
-
-        public Main(string user)
+        public Main(string user, string connectionString)
         {
             InitializeComponent();
             this.MouseRightButtonUp += new MouseButtonEventHandler(DataGridOrders_MouseRightButtonDown);
-            service = new OrderService(@"Data Source=Shpizpurgen-PC\SQLExpress;Initial Catalog=DataBaseZion;Integrated Security=True");
+            service = new OrderService(connectionString);
             this.Title = "ZION [" + user + "]";
             CurrentUser = user;
         }
@@ -69,7 +68,14 @@ namespace DBZion
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            RefreshOrders();
+            try
+            {
+                RefreshOrders();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void DataGridOrders_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -124,7 +130,6 @@ namespace DBZion
                     DAL.Entities.Order p = o as DAL.Entities.Order;
                     return p.ReceiptId.ToString().ToUpper().Contains(filter.ToUpper()) || 
                            p.User.FullName.ToUpper().Contains(filter.ToUpper()) ||
-                           p.User.PhoneNumber.ToUpper().Contains(filter.ToUpper()) ||
                            p.Worker.ToUpper().Contains(filter.ToUpper());
                 };
             }

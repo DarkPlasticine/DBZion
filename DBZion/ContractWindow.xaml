@@ -27,8 +27,8 @@
             <Button DockPanel.Dock="Bottom" x:Name="btnPrint" Click="btnPrint_Click">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <material:PackIcon Kind="Printer" VerticalAlignment="Center" Margin="0 0 8 0" Width="20" Height="20" />
-                        <TextBlock Text="Печать"/>
+                        <material:PackIcon Kind="FileDocument" VerticalAlignment="Center" Margin="0 0 8 0" Width="20" Height="20" />
+                        <TextBlock Text="Предпросмотр"/>
                     </StackPanel>
                 </Button.Content>
             </Button>

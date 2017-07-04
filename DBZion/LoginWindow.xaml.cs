@@ -16,6 +16,9 @@ using System.IO;
 using MahApps.Metro.Controls;
 using MaterialDesignThemes.Wpf;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
+using DBZion.BLL.Services;
 
 namespace DBZion
 {
@@ -24,9 +27,26 @@ namespace DBZion
     /// </summary>
     public partial class LoginWindow : MetroWindow
     {
+        private string conStr = null;
+        private string status = null;
+        Main mainWindow;
+        //OrderService service = null;
+
         public LoginWindow()
         {
             InitializeComponent();
+            XDocument settings = XDocument.Load(Environment.CurrentDirectory + @"/Data/Settings.xml");
+            foreach (XElement el in settings.Root.Elements())
+            {
+                if (el.Name == "connectionString")
+                    conStr = el.Attribute("name").Value;
+                if (el.Name == "status")
+                    status = el.Attribute("name").Value;
+            }
+
+            if (GetStatus(status) == true)
+                statusServer.Foreground = Brushes.Green;
+
             labelVersion.Content = Assembly.GetExecutingAssembly().GetName().Version;
         }
 
@@ -34,9 +54,20 @@ namespace DBZion
         {
             if (UserComboBox.Text != "")
             {
-                var mainWindow = new Main(UserComboBox.Text);
-                mainWindow.Show();
-                this.Close();
+                try
+                {
+                    //service = new OrderService(conStr);
+                    //service.GetOrders();
+                
+                    mainWindow = new Main(UserComboBox.Text, conStr);
+                    mainWindow.Show();
+                    this.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
             }
         }
 
@@ -45,6 +76,19 @@ namespace DBZion
             ImportBD importBDWindow = new ImportBD();
             importBDWindow.Owner = this;
             importBDWindow.Show();
+        }
+
+        private bool GetStatus(string Status)
+        {
+            try
+            {
+                File.ReadAllText(status);
+                return true;
+            }
+            catch 
+            {
+                return false;
+            }
         }
     }
 }
