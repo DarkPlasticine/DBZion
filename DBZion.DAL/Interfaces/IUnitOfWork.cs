@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace DBZion.DAL.Interfaces
 {
@@ -11,5 +12,6 @@ namespace DBZion.DAL.Interfaces
         System.Data.Entity.Database Database { get; }
 
         void Save();
+        Task SaveAsync();
     }
 }

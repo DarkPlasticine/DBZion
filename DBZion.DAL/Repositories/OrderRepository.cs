@@ -46,40 +46,20 @@ namespace DBZion.DAL.Repositories
 
         public List<Order> GetAll()
         {
-            return db.Orders.Include(p => p.User).ToList();
+            return db.Orders.Include(p => p.User).AsNoTracking().ToList();
         }
 
         public List<Order> GetAll(Func<Order, bool> predicate)
         {
-            return db.Orders.Include(p => p.User).Where(predicate).ToList();
+            return db.Orders.Include(p => p.User).AsNoTracking().Where(predicate).ToList();
         }
 
         public async Task<List<Order>> GetAllAsync()
         {
-            return await db.Orders.Include(p => p.User).ToListAsync();
-        }
-
-        public async Task<List<Order>> GetAllAsync(Expression<Func<Order, bool>> predicate)
-        {
-            return await db.Orders.Include(p => p.User).ToListAsync();
-        }
-
-        public List<Order> GetAllANT()
-        {
-            return db.Orders.Include(p => p.User).AsNoTracking().ToList();
-        }
-
-        public List<Order> GetAllANT(Func<Order, bool> predicate)
-        {
-            return db.Orders.Include(p => p.User).AsNoTracking().Where(predicate).ToList();
-        }
-
-        public async Task<List<Order>> GetAllANTAsync()
-        {
             return await db.Orders.Include(p => p.User).AsNoTracking().ToListAsync();
         }
 
-        public async Task<List<Order>> GetAllANTAsync(Expression<Func<Order, bool>> predicate)
+        public async Task<List<Order>> GetAllAsync(Expression<Func<Order, bool>> predicate)
         {
             return await db.Orders.Include(p => p.User).AsNoTracking().Where(predicate).ToListAsync();
         }

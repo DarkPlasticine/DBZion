@@ -13,8 +13,8 @@ namespace DBZion.DAL.Interfaces
         void Delete(User user);
         void DeleteRange(IEnumerable<User> users);
 
-        User FindById(int id);
-        Task<User> FindByIdAsync(int id);
+        User Find(int id);
+        Task<User> FindAsync(int id);
         User Find(Func<User, bool> predicate);
         Task<User> FindAsync(Expression<Func<User, bool>> predicate);
 
@@ -23,12 +23,8 @@ namespace DBZion.DAL.Interfaces
         Task<List<User>> GetAllAsync();
         Task<List<User>> GetAllAsync(Expression<Func<User, bool>> predicate);
 
-        List<User> GetAllANT();
-        List<User> GetAllANT(Func<User, bool> predicate);
-        Task<List<User>> GetAllANTAsync();
-        Task<List<User>> GetAllANTAsync(Expression<Func<User, bool>> predicate);
-
         List<Order> GetUserOrders(int userId);
+        Task<List<Order>> GetUserOrdersAsync(int userId);
 
         List<User> GetUsersWithOrders();
 

@@ -20,11 +20,6 @@ namespace DBZion.DAL.Interfaces
         Task<List<Order>> GetAllAsync();
         Task<List<Order>> GetAllAsync(Expression<Func<Order, bool>> predicate);
 
-        List<Order> GetAllANT();
-        List<Order> GetAllANT(Func<Order, bool> predicate);
-        Task<List<Order>> GetAllANTAsync();
-        Task<List<Order>> GetAllANTAsync(Expression<Func<Order, bool>> predicate);
-
         List<X> GetPropValues<X>(Func<Order, X> selector);
         List<X> GetPropValues<X>(Func<Order, bool> predicate, Func<Order, X> selector);
         Task<List<X>> GetPropValuesAsync<X>(Expression<Func<Order, X>> selector);

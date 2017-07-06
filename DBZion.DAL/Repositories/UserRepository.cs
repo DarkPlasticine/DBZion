@@ -39,52 +39,32 @@ namespace DBZion.DAL.Repositories
             db.Users.RemoveRange(users);
         }
 
-        public User FindById(int id)
+        public User Find(int id)
         {
             return db.Users.Find(id);
         }
 
-        public async Task<User> FindByIdAsync(int id)
+        public async Task<User> FindAsync(int id)
         {
             return await db.Users.FindAsync(id);
         }
 
         public List<User> GetAll()
         {
-            return db.Users.ToList();
+            return db.Users.AsNoTracking().ToList();
         }
 
         public List<User> GetAll(Func<User, bool> predicate)
         {
-            return db.Users.Where(predicate).ToList();
+            return db.Users.AsNoTracking().Where(predicate).ToList();
         }
 
         public async Task<List<User>> GetAllAsync()
         {
-            return await db.Users.ToListAsync();
-        }
-
-        public async Task<List<User>> GetAllAsync(Expression<Func<User, bool>> predicate)
-        {
-            return await db.Users.Where(predicate).ToListAsync();
-        }
-
-        public List<User> GetAllANT()
-        {
-            return db.Users.AsNoTracking().ToList();
-        }
-
-        public List<User> GetAllANT(Func<User, bool> predicate)
-        {
-            return db.Users.AsNoTracking().Where(predicate).ToList();
-        }
-
-        public async Task<List<User>> GetAllANTAsync()
-        {
             return await db.Users.AsNoTracking().ToListAsync();
         }
 
-        public async Task<List<User>> GetAllANTAsync(Expression<Func<User, bool>> predicate)
+        public async Task<List<User>> GetAllAsync(Expression<Func<User, bool>> predicate)
         {
             return await db.Users.AsNoTracking().Where(predicate).ToListAsync();
         }
@@ -102,6 +82,12 @@ namespace DBZion.DAL.Repositories
         public List<Order> GetUserOrders(int userId)
         {
             return db.Users.Include(p => p.Orders).Where(p => p.UserID == userId).AsNoTracking().FirstOrDefault().Orders.ToList();
+        }
+
+        public async Task<List<Order>> GetUserOrdersAsync(int userId)
+        {
+            var user = await db.Users.Include(p => p.Orders).Where(p => p.UserID == userId).AsNoTracking().FirstOrDefaultAsync();
+            return user.Orders.ToList();
         }
 
         public List<User> GetUsersWithOrders()
