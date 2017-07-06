@@ -69,24 +69,44 @@ namespace DBZion.DAL.Repositories
             return await db.Users.Where(predicate).ToListAsync();
         }
 
-        public User GetUser(Func<User, bool> predicate)
+        public List<User> GetAllANT()
+        {
+            return db.Users.AsNoTracking().ToList();
+        }
+
+        public List<User> GetAllANT(Func<User, bool> predicate)
+        {
+            return db.Users.AsNoTracking().Where(predicate).ToList();
+        }
+
+        public async Task<List<User>> GetAllANTAsync()
+        {
+            return await db.Users.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<List<User>> GetAllANTAsync(Expression<Func<User, bool>> predicate)
+        {
+            return await db.Users.AsNoTracking().Where(predicate).ToListAsync();
+        }
+
+        public User Find(Func<User, bool> predicate)
         {
             return db.Users.Where(predicate).FirstOrDefault();
         }
 
-        public async Task<User> GetUserAsync(Expression<Func<User, bool>> predicate)
+        public async Task<User> FindAsync(Expression<Func<User, bool>> predicate)
         {
             return await db.Users.Where(predicate).FirstOrDefaultAsync();
         }
 
-        public List<Order> GetUserOrders(User user)
+        public List<Order> GetUserOrders(int userId)
         {
-            return db.Users.Include(p => p.Orders).Where(p => p.UserID == user.UserID).FirstOrDefault().Orders.ToList();
+            return db.Users.Include(p => p.Orders).Where(p => p.UserID == userId).AsNoTracking().FirstOrDefault().Orders.ToList();
         }
 
         public List<User> GetUsersWithOrders()
         {
-            return db.Users.Include(p => p.Orders).ToList();
+            return db.Users.Include(p => p.Orders).AsNoTracking().ToList();
         }
 
         public List<X> GetPropValues<X>(Func<User, X> selector)

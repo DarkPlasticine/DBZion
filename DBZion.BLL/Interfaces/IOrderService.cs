@@ -39,7 +39,7 @@ namespace DBZion.BLL.Interfaces
         Task<List<User>> GetUsersAsync();
         Task<List<User>> GetUsersAsync(Expression<Func<User, bool>> predicate);
 
-        List<Order> GetUserOrders(User user);
+        List<Order> GetUserOrders(int userId);
 
         int RemoveInactiveUsers();
     }

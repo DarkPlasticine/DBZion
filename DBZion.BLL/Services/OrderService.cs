@@ -174,6 +174,50 @@ namespace DBZion.BLL.Services
         }
 
         /// <summary>
+        /// Возвращает список заказов.
+        /// </summary>
+        /// <returns></returns>
+        public ObservableCollection<Order> GetOrders()
+        {
+            var orders = db.Orders.GetAllANT();
+            return new ObservableCollection<Order>(orders);
+        }
+
+        /// <summary>
+        /// Возвращает список заказов по определенному условию.
+        /// Использование: var orders = GetOrders(p => p.ServiceType == "Ремонт");
+        /// </summary>
+        /// <param name="predicate">Условие.</param>
+        /// <returns></returns>
+        public ObservableCollection<Order> GetOrders(Func<Order, bool> predicate)
+        {
+            var orders = db.Orders.GetAllANT(predicate);
+            return new ObservableCollection<Order>(orders);
+        }
+
+        /// <summary>
+        /// Возвращает список заказов.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ObservableCollection<Order>> GetOrdersAsync()
+        {
+            var orders = await db.Orders.GetAllANTAsync();
+            return new ObservableCollection<Order>(orders);
+        }
+
+        /// <summary>
+        /// Возвращает список заказов по определенному условию.
+        /// Использование: var orders = await GetOrdersAsync(p => p.ServiceType == "Ремонт");
+        /// </summary>
+        /// <param name="predicate">Условие.</param>
+        /// <returns></returns>
+        public async Task<ObservableCollection<Order>> GetOrdersAsync(Expression<Func<Order, bool>> predicate)
+        {
+            var orders = await db.Orders.GetAllANTAsync(predicate);
+            return new ObservableCollection<Order>(orders);
+        }
+
+        /// <summary>
         /// Возвращает уникальные значения для выбранного поля.
         /// Использование: var serviceTypes = GetFieldValues(p => p.ServiceType);
         /// </summary>
@@ -221,51 +265,6 @@ namespace DBZion.BLL.Services
         public async Task<List<X>> GetFieldValuesAsync<X>(Expression<Func<Order, bool>> predicate, Expression<Func<Order, X>> selector)
         {
             return await db.Orders.GetPropValuesAsync(predicate, selector);
-        }
-
-        /// <summary>
-        /// Возвращает список заказов.
-        /// </summary>
-        /// <returns></returns>
-        public ObservableCollection<Order> GetOrders()
-        {
-            var orders = db.Orders.GetAll();
-            return new ObservableCollection<Order>(orders);
-        }
-
-
-        /// <summary>
-        /// Возвращает список заказов по определенному условию.
-        /// Использование: var orders = GetOrders(p => p.ServiceType == "Ремонт");
-        /// </summary>
-        /// <param name="predicate">Условие.</param>
-        /// <returns></returns>
-        public ObservableCollection<Order> GetOrders(Func<Order, bool> predicate)
-        {
-            var orders = db.Orders.GetAll(predicate);
-            return new ObservableCollection<Order>(orders);
-        }
-
-        /// <summary>
-        /// Возвращает список заказов.
-        /// </summary>
-        /// <returns></returns>
-        public async Task<ObservableCollection<Order>> GetOrdersAsync()
-        {
-            var orders = await db.Orders.GetAllAsync();
-            return new ObservableCollection<Order>(orders);
-        }
-
-        /// <summary>
-        /// Возвращает список заказов по определенному условию.
-        /// Использование: var orders = await GetOrdersAsync(p => p.ServiceType == "Ремонт");
-        /// </summary>
-        /// <param name="predicate">Условие.</param>
-        /// <returns></returns>
-        public async Task<ObservableCollection<Order>> GetOrdersAsync(Expression<Func<Order, bool>> predicate)
-        {
-            var orders = await db.Orders.GetAllAsync(predicate);
-            return new ObservableCollection<Order>(orders);
         }
 
         #endregion
@@ -352,7 +351,7 @@ namespace DBZion.BLL.Services
         /// <returns></returns>
         public User FindUser(Func<User, bool> predicate)
         {
-            return db.Users.GetUser(predicate);
+            return db.Users.Find(predicate);
         }
 
         /// <summary>
@@ -363,7 +362,7 @@ namespace DBZion.BLL.Services
         /// <returns></returns>
         public async Task<User> FindUserAsync(Expression<Func<User, bool>> predicate)
         {
-            return await db.Users.GetUserAsync(predicate);
+            return await db.Users.FindAsync(predicate);
         }
 
         /// <summary>
@@ -372,7 +371,7 @@ namespace DBZion.BLL.Services
         /// <returns></returns>
         public List<User> GetUsers()
         {
-            return db.Users.GetAll();
+            return db.Users.GetAllANT();
         }
 
         /// <summary>
@@ -383,7 +382,7 @@ namespace DBZion.BLL.Services
         /// <returns></returns>
         public List<User> GetUsers(Func<User, bool> predicate)
         {
-            return db.Users.GetAll(predicate);
+            return db.Users.GetAllANT(predicate);
         }
 
         /// <summary>
@@ -392,7 +391,7 @@ namespace DBZion.BLL.Services
         /// <returns></returns>
         public async Task<List<User>> GetUsersAsync()
         {
-            return await db.Users.GetAllAsync();
+            return await db.Users.GetAllANTAsync();
         }
 
         /// <summary>
@@ -403,7 +402,7 @@ namespace DBZion.BLL.Services
         /// <returns></returns>
         public async Task<List<User>> GetUsersAsync(Expression<Func<User, bool>> predicate)
         {
-            return await db.Users.GetAllAsync(predicate);
+            return await db.Users.GetAllANTAsync(predicate);
         }
 
         /// <summary>
@@ -411,9 +410,9 @@ namespace DBZion.BLL.Services
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public List<Order> GetUserOrders(User user)
+        public List<Order> GetUserOrders(int userId)
         {
-            return db.Users.GetUserOrders(user).ToList();
+            return db.Users.GetUserOrders(userId).ToList();
         }
 
         /// <summary>
