@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace DBZion.BLL.Services
 {
-    public class OrderService : IOrderService
+    public class OrderService : IOrderService, IDisposable
     {
         private IUnitOfWork db;
 
@@ -544,5 +544,10 @@ namespace DBZion.BLL.Services
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            db.Dispose();
+        }
     }
 }
