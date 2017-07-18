@@ -19,6 +19,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using DBZion.BLL.Services;
+using System.Configuration;
 
 namespace DBZion
 {
@@ -34,20 +35,31 @@ namespace DBZion
 
         public LoginWindow()
         {
-            InitializeComponent();
             XDocument settings = XDocument.Load(Environment.CurrentDirectory + @"/Data/Settings.xml");
+
+            InitializeComponent();
             foreach (XElement el in settings.Root.Elements())
             {
                 if (el.Name == "connectionString")
+                {
                     conStr = el.Attribute("name").Value;
+                    SetConnectionString();
+                }
                 if (el.Name == "status")
                     status = el.Attribute("name").Value;
+                if (el.Name == "programVersion")
+                {
+                    labelVersion.Content = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                    el.Attribute("version").Value = labelVersion.Content.ToString();
+                }
             }
+
+            settings.Save(Environment.CurrentDirectory + @"/Data/Settings.xml");
 
             if (GetStatus(status) == true)
                 statusServer.Foreground = Brushes.Green;
 
-            labelVersion.Content = Assembly.GetExecutingAssembly().GetName().Version;
+            //labelVersion.Content = Assembly.GetExecutingAssembly().GetName().Version;
         }
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
@@ -59,7 +71,7 @@ namespace DBZion
                     //service = new OrderService(conStr);
                     //service.GetOrders();
                 
-                    mainWindow = new Main(UserComboBox.Text, conStr);
+                    mainWindow = new Main(UserComboBox.Text);
                     mainWindow.Show();
                     this.Close();
                 }
@@ -89,6 +101,29 @@ namespace DBZion
             {
                 return false;
             }
+        }
+
+        private void SetConnectionString()
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+
+            foreach (XmlElement element in xmlDoc.DocumentElement)
+            {
+                if (element.Name.Equals("connectionStrings"))
+                {
+                    foreach (XmlNode node in element.ChildNodes)
+                    {
+                        if (node.Attributes[0].Value.Equals("DbConnection"))
+                        {
+                            node.Attributes[1].Value = conStr;
+                        }
+                    }
+                }
+            }
+
+            xmlDoc.Save(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+            ConfigurationManager.RefreshSection("connectionStrings");
         }
     }
 }

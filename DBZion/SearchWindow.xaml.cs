@@ -23,6 +23,8 @@ namespace DBZion
     public partial class SearchWindow : MetroWindow
     {
         Main main = null;
+        private OrderService service = null;
+
         public SearchWindow()
         {
             InitializeComponent();
@@ -32,21 +34,23 @@ namespace DBZion
         {
             main = this.Owner as Main;
 
+            service = new OrderService("DbConnection");
+
             if (txbNumber.Text.Trim() != "")
             {
-                var orders = main.service.GetOrders(p => p.ReceiptId == Convert.ToInt32(txbNumber.Text));
+                var orders = service.GetOrders(p => p.ReceiptId == Convert.ToInt32(txbNumber.Text));
                 DataGridOrders.ItemsSource = orders;
                 txbNumber.Clear();
             }
             else if (txbPhone.Text[2] != '_' && txbPhone.Text[13] != '_')
             {
-                var orders = main.service.GetOrders(p => p.User.PhoneNumber == txbPhone.Text);
+                var orders = service.GetOrders(p => p.User.PhoneNumber == txbPhone.Text);
                 DataGridOrders.ItemsSource = orders;
                 txbPhone.Clear();
             }
             else if (txbFullName.Text.Trim() != "")
             {
-                var orders = main.service.GetOrders(p => p.User.FullName.ToLower().Contains(txbFullName.Text.ToLower()));
+                var orders = service.GetOrders(p => p.User.FullName.ToLower().Contains(txbFullName.Text.ToLower()));
                 DataGridOrders.ItemsSource = orders;
                 txbFullName.Clear();
             }
@@ -54,20 +58,19 @@ namespace DBZion
             {
                 if (dpStart.Text.Trim() != "" && dpStop.Text.Trim() != "")
                 {
-                    var orders = main.service.GetOrders(p => p.OrderDate.Date >= Convert.ToDateTime(dpStart.Text) && p.OrderDate.Date <= Convert.ToDateTime(dpStop.Text).Date);
+                    var orders = service.GetOrders(p => p.OrderDate.Date >= Convert.ToDateTime(dpStart.Text) && p.OrderDate.Date <= Convert.ToDateTime(dpStop.Text).Date);
                     DataGridOrders.ItemsSource = orders;
                 }
                 dpStart.Text = dpStop.Text = "";
-                
-
             }
             else
             {
-                var orders = main.service.GetOrders();
+                var orders = service.GetOrders();
                 DataGridOrders.ItemsSource = orders;
                 MessageBox.Show(orders.Count.ToString());
             }
 
+            service.Dispose();
         }
 
         private void DataGridOrders_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -109,11 +112,13 @@ namespace DBZion
 
         private void menuRestore_Click(object sender, RoutedEventArgs e)
         {
+            service = new OrderService("DbConnection");
             var _order = ((DBZion.DAL.Entities.Order)DataGridOrders.SelectedItem).OrderId;
 
-            main.service.UpdateOrder(_order, true);
+            service.UpdateOrder(_order, true);
             main.RefreshOrders();
             //main.service.UpdateOrder(_order.OrderId, _fullName[0], _fullName[1], _fullName[2], _order.User.PhoneNumber, _order.ReceiptId, _order.ReceiptType, _order.ServiceType, _order.Price, _order.Description, _order.Note, true, _order.IsReady, _order.Call, _order.Worker);
+            service.Dispose();
         }
 
         private void menuView_Click(object sender, RoutedEventArgs e)

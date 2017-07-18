@@ -25,11 +25,11 @@ namespace DBZion.BLL.Services
         public OrderService(string connectionString)
         {
             db = new EFUnitOfWork(connectionString);
-            if (!db.Database.Exists())
-            {
-                db.Dispose();
-                throw new Exception("Ошибка подключения к базе даныых");
-            }
+            //if (!db.Database.Exists())
+            //{
+            //    db.Dispose();
+            //    throw new Exception("Ошибка подключения к базе данных");
+            //}
         }
 
         #region Работа с заказами
@@ -44,7 +44,10 @@ namespace DBZion.BLL.Services
                     //определяем, есть ли указанный пользователь в БД
                     User user = FindUser(p => p.Surname == order.User.Surname && p.FirstName == order.User.FirstName && p.MiddleName == order.User.MiddleName && p.PhoneNumber == order.User.PhoneNumber);
                     if (user != null)
+                    {
                         order.User = user;
+                        order.UserID = user.UserID;
+                    }
                     db.Orders.Add(order);
                     db.Save();
                     transaction.Commit();
@@ -79,7 +82,10 @@ namespace DBZion.BLL.Services
                     //определяем, есть ли указанный пользователь в БД
                     User user = await FindUserAsync(p => p.Surname == order.User.Surname && p.FirstName == order.User.FirstName && p.MiddleName == order.User.MiddleName && p.PhoneNumber == order.User.PhoneNumber);
                     if (user != null)
+                    {
                         order.User = user;
+                        order.UserID = user.UserID;
+                    }
                     db.Orders.Add(order);
                     await db.SaveAsync();
                     transaction.Commit();
@@ -152,8 +158,25 @@ namespace DBZion.BLL.Services
                 Order oldOrder = db.Orders.FindById(id);
                 User user = FindUser(p => p.Surname == order.User.Surname && p.FirstName == order.User.FirstName && p.MiddleName == order.User.MiddleName && p.PhoneNumber == order.User.PhoneNumber);
                 if (user != null)
-                    order.User = user;
-                oldOrder = order;
+                {
+                    oldOrder.User = user;
+                    oldOrder.UserID = user.UserID;
+                }
+                else
+                {
+                    oldOrder.UserID = 0;
+                    oldOrder.User = order.User;
+                }
+
+                oldOrder.Call = order.Call;
+                oldOrder.Description = order.Description;
+                oldOrder.IsActive = order.IsActive;
+                oldOrder.IsReady = order.IsReady;
+                oldOrder.Note = order.Note;
+                oldOrder.Price = order.Price;
+                oldOrder.ReceiptType = order.ReceiptType;
+                oldOrder.ServiceType = order.ServiceType;
+
                 db.Orders.Update(oldOrder);
                 db.Save();
             }
@@ -175,7 +198,10 @@ namespace DBZion.BLL.Services
                 Order oldOrder = await db.Orders.FindByIdAsync(id);
                 User user = await FindUserAsync(p => p.Surname == order.User.Surname && p.FirstName == order.User.FirstName && p.MiddleName == order.User.MiddleName && p.PhoneNumber == order.User.PhoneNumber);
                 if (user != null)
+                {
                     order.User = user;
+                    order.UserID = user.UserID;
+                }
                 oldOrder = order;
                 db.Orders.Update(oldOrder);
                 await db.SaveAsync();

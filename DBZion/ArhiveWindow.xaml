@@ -18,7 +18,7 @@
         WindowStartupLocation="CenterScreen"
         Icon="zion_icon.ico" 
         
-        Title="Архив" MinHeight="500" MinWidth="850">
+        Title="Архив" MinHeight="500" MinWidth="850" Loaded="MetroWindow_Loaded">
     <Grid>
         <DockPanel>
             <material:Card DockPanel.Dock="Left" Background="{DynamicResource MaterialDesignBackground}" VerticalAlignment="Stretch">
@@ -30,7 +30,16 @@
                             </TextBlock.LayoutTransform>
                         </TextBlock>
                     </Expander.Header>
-                    <ListBox IsEnabled="{Binding IsChecked, ElementName=EnableListBox}" Width="150" ItemsSource="{Binding}"/>
+                    <ListBox x:Name="userList" Width="150" ItemsSource="{Binding}" PreviewMouseLeftButtonDown="userList_PreviewMouseLeftButtonDown">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Visibility="Hidden" x:Name="userId" Text="{Binding Path=UserID}"></TextBlock>
+                                    <TextBlock Text="{Binding Path = FullName}"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </Expander>
             </material:Card>
             <DataGrid ItemsSource="{Binding}" CanUserSortColumns="True" CanUserAddRows="False"

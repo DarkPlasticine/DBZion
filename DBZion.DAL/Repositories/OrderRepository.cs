@@ -31,6 +31,7 @@ namespace DBZion.DAL.Repositories
 
         public void Update(Order order)
         {
+            db.Orders.Attach(order);
             db.Entry(order).State = EntityState.Modified;
         }
 

@@ -26,6 +26,7 @@ namespace DBZion
         private static Order order = null;
         private bool isUpdating = false;
         Main main = null;
+        private OrderService service = null;
 
         public CreateReceiptWindow()
         {
@@ -47,8 +48,9 @@ namespace DBZion
             main = this.Owner as Main ;
             if (main != null)
             {
+                service = new OrderService("DbConnection");
                 List<string> receiptTypes = new List<string> { "Услуги", "Тест Б/У", "Картридж" };
-                List<string> serviceTypes = main.service.GetFieldValues(p => p.ServiceType);
+                List<string> serviceTypes = service.GetFieldValues(p => p.ServiceType);
                 isUpdating = false;
 
                 cbReceiptType.ItemsSource = receiptTypes;
@@ -56,7 +58,7 @@ namespace DBZion
                 if (main.selectedOrderID != 0)
                 {
                     isUpdating = true;
-                    order = main.service.GetOrders(p => p.OrderId == main.selectedOrderID).FirstOrDefault();
+                    order = service.FindOrder(main.selectedOrderID); //GetOrders(p => p.OrderId == main.selectedOrderID).FirstOrDefault();
                     if (order != null)
                     {
                         gridOrder.DataContext = order;
@@ -65,12 +67,13 @@ namespace DBZion
                 }
                 else
                 {
-                    
-                    cbFullName.ItemsSource = main.service.GetUsers().Select(p => p.FullName).ToList();
+                    cbFullName.ItemsSource = service.GetUsers().Select(p => p.FullName).ToList();
                     txbDate.Text = DateTime.Now.ToString();
-                    txbReceiptId.Text = GetReceiptID(main.service.GetOrders(k => k.IsActive == true).ToDictionary(p => p.ReceiptId)).ToString();
+                    txbReceiptId.Text = GetReceiptID(service.GetOrders(k => k.IsActive == true).ToDictionary(p => p.ReceiptId)).ToString();
                     txbWorker.Text = main.CurrentUser;
                 }
+
+                service.Dispose();
             }
         }
 
@@ -116,18 +119,19 @@ namespace DBZion
 
                 };
 
-
+                service = new OrderService("DbConnection");
                 if (isUpdating == false)
                 {
                     //Добавление квитанции
-                    main.service.AddOrder(_order);
+                    service.AddOrder(_order);
                 }
                 else
                 {
                     // Обновление уже созданной квитанции
-                    main.service.UpdateOrder(main.selectedOrderID, _order);
+                    service.UpdateOrder(main.selectedOrderID, _order);
                 }
                 main.RefreshOrders();
+                service.Dispose();
                 this.Close();
             }
             catch (Exception ex)
@@ -138,10 +142,12 @@ namespace DBZion
 
         private void OnComboboxTextChanged(object sender, RoutedEventArgs e)
         {
-
-            var user = main.service.FindUser(p => p.FullName == cbFullName.Text);
+            service = new OrderService("DbConnection");
+            var user = service.FindUser(p => p.FullName == cbFullName.Text);
             if (user != null)
                 txbPhone.Text = user.PhoneNumber;
+
+            service.Dispose();
             ////cbFullName.IsDropDownOpen = true;
 
             //var tb = (TextBox)e.OriginalSource;
@@ -153,9 +159,11 @@ namespace DBZion
 
         private void cbFullName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var user = main.service.FindUser(p => p.FullName == cbFullName.Text);
+            service = new OrderService("DbConnection");
+            var user = service.FindUser(p => p.FullName == cbFullName.Text);
             if (user != null)
                 txbPhone.Text = user.PhoneNumber;
+            service.Dispose();
         }
 
         private void cbFullName_KeyDown(object sender, KeyEventArgs e)
@@ -182,10 +190,12 @@ namespace DBZion
 
         private void cbFullName_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
+            service = new OrderService("DbConnection");
             cbFullName.IsDropDownOpen = true;
-            var users = main.service.GetUsers(p => p.FullName.Contains(e.Text));
+            var users = service.GetUsers(p => p.FullName.Contains(e.Text));
             if (users.Count != 0)
                 cbFullName.ItemsSource = users;
+            service.Dispose();
         }
 
         private void btnAgreement_Click(object sender, RoutedEventArgs e)

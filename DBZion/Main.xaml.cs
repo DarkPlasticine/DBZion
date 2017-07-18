@@ -27,14 +27,15 @@ namespace DBZion
     {
         public string CurrentUser { get; set; }
 
-        protected internal OrderService service = null;
+        private OrderService service = null;
         protected internal int selectedOrderID = 0;
 
-        public Main(string user, string connectionString)
+        public Main(string user)
         {
             InitializeComponent();
             this.MouseRightButtonUp += new MouseButtonEventHandler(DataGridOrders_MouseRightButtonDown);
-            service = new OrderService(connectionString);
+           
+          
             this.Title = "ZION [" + user + "]";
             CurrentUser = user;
         }
@@ -91,8 +92,10 @@ namespace DBZion
 
         public void RefreshOrders()
         {
+            service = new OrderService("DbConnection");
             var orders = service.GetOrders(p => p.IsActive == true);
             DataGridOrders.ItemsSource = orders;
+            service.Dispose();
         }
 
         private void DataGridOrders_LoadingRow(object sender, DataGridRowEventArgs e)
@@ -184,17 +187,21 @@ namespace DBZion
 
         private void menuDelete_Click(object sender, RoutedEventArgs e)
         {
+            service = new OrderService("DbConnection");
             selectedOrderID = ((DAL.Entities.Order)DataGridOrders.SelectedItem).OrderId;
             service.UpdateOrder(selectedOrderID, false);
+            service.Dispose();
             RefreshOrders();
         }
 
         private void menuComplete_Click(object sender, RoutedEventArgs e)
         {
+            service = new OrderService("DbConnection");
             selectedOrderID = ((DAL.Entities.Order)DataGridOrders.SelectedItem).OrderId;
-            var order = service.GetOrders(p => p.OrderId == selectedOrderID).FirstOrDefault();
+            var order = service.FindOrder(selectedOrderID);
             order.IsReady = true;
             service.UpdateOrder(selectedOrderID, order);
+            service.Dispose();
             RefreshOrders();
         }
     }
