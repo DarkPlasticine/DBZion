@@ -1,6 +1,7 @@
 ﻿using DBZion.DAL.EF;
 using DBZion.DAL.Interfaces;
 using System;
+using System.Threading.Tasks;
 
 namespace DBZion.DAL.Repositories
 {
@@ -48,6 +49,10 @@ namespace DBZion.DAL.Repositories
             db.SaveChanges();
         }
 
+        public async Task SaveAsync()
+        {
+            await db.SaveChangesAsync();
+        }
 
         private bool disposed = false;
 

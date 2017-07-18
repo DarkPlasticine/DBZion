@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace DBZion.BLL.Services
 {
-    public class OrderService : IOrderService
+    public class OrderService : IOrderService, IDisposable
     {
         private IUnitOfWork db;
 
@@ -70,21 +70,31 @@ namespace DBZion.BLL.Services
         }
 
         // Добавление нового заказа в базу данных.
-        public void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, int receiptId, string receiptType,
-                         string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker)
+        public async Task AddOrderAsync(Order order)
         {
             using (var transaction = db.Database.BeginTransaction())
             {
                 try
                 {
                     //определяем, есть ли указанный пользователь в БД
-                    User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
-                    if (user == null)
-                        user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
-                    Order order = new Order(receiptId, receiptType, serviceType, price, orderDate, description, note, isActive, isReady, call, user, worker);
+                    User user = await FindUserAsync(p => p.Surname == order.User.Surname && p.FirstName == order.User.FirstName && p.MiddleName == order.User.MiddleName && p.PhoneNumber == order.User.PhoneNumber);
+                    if (user != null)
+                        order.User = user;
                     db.Orders.Add(order);
-                    db.Save();
+                    await db.SaveAsync();
                     transaction.Commit();
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    foreach (DbEntityValidationResult validationError in ex.EntityValidationErrors)
+                    {
+                        Debug.Write("Object: " + validationError.Entry.Entity.ToString());
+                        Debug.Write(" ");
+                        foreach (DbValidationError err in validationError.ValidationErrors)
+                        {
+                            Debug.Write(err.ErrorMessage + " ");
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -103,6 +113,26 @@ namespace DBZion.BLL.Services
                 order.IsActive = isActive;
                 db.Orders.Update(order);
                 db.Save();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw new Exception("Данный заказ ранее уже был изменен. \n" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ошибка при обновлении заказа \n" + ex.Message);
+            }
+        }
+
+        //изменение параметра IsActive заказа
+        public async Task UpdateOrderAsync(int id, bool isActive)
+        {
+            try
+            {
+                Order order = await db.Orders.FindByIdAsync(id);
+                order.IsActive = isActive;
+                db.Orders.Update(order);
+                await db.SaveAsync();
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -138,30 +168,17 @@ namespace DBZion.BLL.Services
         }
 
         // Обновление заказа в базе данных.
-        public void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, int receiptId, string receiptType,
-                                string serviceType, int price, string description, string note, bool isActive, bool isReady, bool call, string worker)
+        public async Task UpdateOrderAsync(int id, Order order)
         {
             try
             {
-                Order order = db.Orders.FindById(id);
-                //определяем, есть ли указанный пользователь в БД
-                User user = FindUser(p => p.Surname == userSurname && p.FirstName == userFirstName && p.MiddleName == userMiddleName && p.PhoneNumber == userPhoneNumber);
-                if (user == null)
-                    user = new User(userSurname, userFirstName, userMiddleName, userPhoneNumber);
-                order.ReceiptId = receiptId;
-                order.ReceiptType = receiptType;
-                order.ServiceType = serviceType;
-                order.Price = price;
-                order.Description = description;
-                order.Note = note;
-                order.IsActive = isActive;
-                order.IsReady = isReady;
-                order.Call = call;
-                order.User = user;
-                order.Worker = worker;
-
-                db.Orders.Update(order);
-                db.Save();
+                Order oldOrder = await db.Orders.FindByIdAsync(id);
+                User user = await FindUserAsync(p => p.Surname == order.User.Surname && p.FirstName == order.User.FirstName && p.MiddleName == order.User.MiddleName && p.PhoneNumber == order.User.PhoneNumber);
+                if (user != null)
+                    order.User = user;
+                oldOrder = order;
+                db.Orders.Update(oldOrder);
+                await db.SaveAsync();
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -171,6 +188,70 @@ namespace DBZion.BLL.Services
             {
                 throw new Exception("Ошибка при обновлении заказа \n" + ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Возвращает заказ по Id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Order FindOrder(int id)
+        {
+            return db.Orders.FindById(id);
+        }
+
+        /// <summary>
+        /// Возвращает заказ по Id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Order> FindOrderAsync(int id)
+        {
+            return await db.Orders.FindByIdAsync(id);
+        }
+
+        /// <summary>
+        /// Возвращает список заказов.
+        /// </summary>
+        /// <returns></returns>
+        public ObservableCollection<Order> GetOrders()
+        {
+            var orders = db.Orders.GetAll();
+            return new ObservableCollection<Order>(orders);
+        }
+
+        /// <summary>
+        /// Возвращает список заказов по определенному условию.
+        /// Использование: var orders = GetOrders(p => p.ServiceType == "Ремонт");
+        /// </summary>
+        /// <param name="predicate">Условие.</param>
+        /// <returns></returns>
+        public ObservableCollection<Order> GetOrders(Func<Order, bool> predicate)
+        {
+            var orders = db.Orders.GetAll(predicate);
+            return new ObservableCollection<Order>(orders);
+        }
+
+        /// <summary>
+        /// Возвращает список заказов.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ObservableCollection<Order>> GetOrdersAsync()
+        {
+            var orders = await db.Orders.GetAllAsync();
+            return new ObservableCollection<Order>(orders);
+        }
+
+        /// <summary>
+        /// Возвращает список заказов по определенному условию.
+        /// Использование: var orders = await GetOrdersAsync(p => p.ServiceType == "Ремонт");
+        /// </summary>
+        /// <param name="predicate">Условие.</param>
+        /// <returns></returns>
+        public async Task<ObservableCollection<Order>> GetOrdersAsync(Expression<Func<Order, bool>> predicate)
+        {
+            var orders = await db.Orders.GetAllAsync(predicate);
+            return new ObservableCollection<Order>(orders);
         }
 
         /// <summary>
@@ -223,51 +304,6 @@ namespace DBZion.BLL.Services
             return await db.Orders.GetPropValuesAsync(predicate, selector);
         }
 
-        /// <summary>
-        /// Возвращает список заказов.
-        /// </summary>
-        /// <returns></returns>
-        public ObservableCollection<Order> GetOrders()
-        {
-            var orders = db.Orders.GetAll();
-            return new ObservableCollection<Order>(orders);
-        }
-
-
-        /// <summary>
-        /// Возвращает список заказов по определенному условию.
-        /// Использование: var orders = GetOrders(p => p.ServiceType == "Ремонт");
-        /// </summary>
-        /// <param name="predicate">Условие.</param>
-        /// <returns></returns>
-        public ObservableCollection<Order> GetOrders(Func<Order, bool> predicate)
-        {
-            var orders = db.Orders.GetAll(predicate);
-            return new ObservableCollection<Order>(orders);
-        }
-
-        /// <summary>
-        /// Возвращает список заказов.
-        /// </summary>
-        /// <returns></returns>
-        public async Task<ObservableCollection<Order>> GetOrdersAsync()
-        {
-            var orders = await db.Orders.GetAllAsync();
-            return new ObservableCollection<Order>(orders);
-        }
-
-        /// <summary>
-        /// Возвращает список заказов по определенному условию.
-        /// Использование: var orders = await GetOrdersAsync(p => p.ServiceType == "Ремонт");
-        /// </summary>
-        /// <param name="predicate">Условие.</param>
-        /// <returns></returns>
-        public async Task<ObservableCollection<Order>> GetOrdersAsync(Expression<Func<Order, bool>> predicate)
-        {
-            var orders = await db.Orders.GetAllAsync(predicate);
-            return new ObservableCollection<Order>(orders);
-        }
-
         #endregion
 
         #region Работа с пользователями
@@ -275,15 +311,13 @@ namespace DBZion.BLL.Services
         /// <summary>
         /// Добавляет пользователя в базу данных.
         /// </summary>
-        /// <param name="surname">Фамилия</param>
-        /// <param name="firstName">Имя</param>
-        /// <param name="middleName">Отчество</param>
-        /// <param name="phoneNumber">Номер телефона</param>
-        public void AddUser(string surname, string firstName, string middleName, string phoneNumber)
+        /// <param name="user"></param>
+        public void AddUser(User user)
         {
             try
             {
-                User user = new User(surname, firstName, middleName, phoneNumber);
+                if (db.Users.Find(p => p.Surname == user.Surname && p.FirstName == user.FirstName && p.MiddleName == user.MiddleName && p.PhoneNumber == user.PhoneNumber) != null)
+                    throw new Exception("Пользователь с указанными данными уже существует.");
                 db.Users.Add(user);
                 db.Save();
             }
@@ -294,27 +328,72 @@ namespace DBZion.BLL.Services
         }
 
         /// <summary>
-        /// Изменяет пользователя в базе данных.
+        /// Добавляет пользователя в базу данных.
         /// </summary>
-        /// <param name="id">Id пользователя</param>
-        /// <param name="surname">Фамилия</param>
-        /// <param name="firstName">Имя</param>
-        /// <param name="middleName">Отчество</param>
-        /// <param name="phoneNumber">Номер телефона</param>
-        public void UpdateUser(int id, string surname, string firstName, string middleName, string phoneNumber)
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public async Task AddUserAsync(User user)
         {
             try
             {
-                User user = db.Users.FindById(id);
-                user.Surname = surname;
-                user.FirstName = firstName;
-                user.MiddleName = middleName;
-                user.PhoneNumber = phoneNumber;
+                if (await db.Users.FindAsync(p => p.Surname == user.Surname && p.FirstName == user.FirstName && p.MiddleName == user.MiddleName && p.PhoneNumber == user.PhoneNumber) != null)
+                    throw new Exception("Пользователь с указанными данными уже существует.");
+                db.Users.Add(user);
+                await db.SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ошибка при добавлении пользователя \n" + ex.Message);
+            }
+        }
 
-                db.Users.Update(user);
+        /// <summary>
+        /// Изменяет пользователя в базе данных.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="user"></param>
+        public void UpdateUser(int id, User user)
+        {
+            try
+            {
+                User dbUser = db.Users.Find(id);
+                dbUser.Surname = user.Surname;
+                dbUser.FirstName = user.FirstName;
+                dbUser.MiddleName = user.MiddleName;
+                dbUser.PhoneNumber = user.PhoneNumber;
+
+                db.Users.Update(dbUser);
                 db.Save();
             }
-            catch(DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new Exception("Данные указанного пользователя были изменены ранее");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ошибка при изменении пользователя \n" + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Изменяет пользователя в базе данных.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="user"></param>
+        public async Task UpdateUserAsync(int id, User user)
+        {
+            try
+            {
+                User dbUser = await db.Users.FindAsync(id);
+                dbUser.Surname = user.Surname;
+                dbUser.FirstName = user.FirstName;
+                dbUser.MiddleName = user.MiddleName;
+                dbUser.PhoneNumber = user.PhoneNumber;
+
+                db.Users.Update(dbUser);
+                await db.SaveAsync();
+            }
+            catch (DbUpdateConcurrencyException)
             {
                 throw new Exception("Данные указанного пользователя были изменены ранее");
             }
@@ -331,7 +410,7 @@ namespace DBZion.BLL.Services
         /// <returns></returns>
         public User FindUser(int id)
         {
-            return db.Users.FindById(id);
+            return db.Users.Find(id);
         }
 
         /// <summary>
@@ -341,7 +420,7 @@ namespace DBZion.BLL.Services
         /// <returns></returns>
         public async Task<User> FindUserAsync(int id)
         {
-            return await db.Users.FindByIdAsync(id);
+            return await db.Users.FindAsync(id);
         }
 
         /// <summary>
@@ -352,7 +431,7 @@ namespace DBZion.BLL.Services
         /// <returns></returns>
         public User FindUser(Func<User, bool> predicate)
         {
-            return db.Users.GetUser(predicate);
+            return db.Users.Find(predicate);
         }
 
         /// <summary>
@@ -363,7 +442,7 @@ namespace DBZion.BLL.Services
         /// <returns></returns>
         public async Task<User> FindUserAsync(Expression<Func<User, bool>> predicate)
         {
-            return await db.Users.GetUserAsync(predicate);
+            return await db.Users.FindAsync(predicate);
         }
 
         /// <summary>
@@ -409,11 +488,21 @@ namespace DBZion.BLL.Services
         /// <summary>
         /// Возвращает список всех заказов пользователя.
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="userId"></param>
         /// <returns></returns>
-        public List<Order> GetUserOrders(User user)
+        public List<Order> GetUserOrders(int userId)
         {
-            return db.Users.GetUserOrders(user).ToList();
+            return db.Users.GetUserOrders(userId);
+        }
+
+        /// <summary>
+        /// Возвращает список всех заказов пользователя.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<List<Order>> GetUserOrdersAsync(int userId)
+        {
+            return await db.Users.GetUserOrdersAsync(userId);
         }
 
         /// <summary>
@@ -455,5 +544,10 @@ namespace DBZion.BLL.Services
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            db.Dispose();
+        }
     }
 }

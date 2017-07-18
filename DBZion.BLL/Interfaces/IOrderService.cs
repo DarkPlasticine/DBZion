@@ -10,10 +10,14 @@ namespace DBZion.BLL.Interfaces
     public interface IOrderService
     {
         void AddOrder(Order order);
-        void AddOrder(string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, int receiptId, string receiptType, string serviceType, int price, DateTime orderDate, string description, string note, bool isActive, bool isReady, bool call, string worker);
+        Task AddOrderAsync(Order order);
         void UpdateOrder(int id, bool isActive);
         void UpdateOrder(int id, Order order);
-        void UpdateOrder(int id, string userSurname, string userFirstName, string userMiddleName, string userPhoneNumber, int receiptId, string receiptType, string serviceType, int price, string description, string note, bool isActive, bool isReady, bool call, string worker);
+        Task UpdateOrderAsync(int id, bool isActive);
+        Task UpdateOrderAsync(int id, Order order);
+
+        Order FindOrder(int id);
+        Task<Order> FindOrderAsync(int id);
 
         ObservableCollection<Order> GetOrders();
         ObservableCollection<Order> GetOrders(Func<Order, bool> predicate);
@@ -26,8 +30,10 @@ namespace DBZion.BLL.Interfaces
         Task<List<X>> GetFieldValuesAsync<X>(Expression<Func<Order, bool>> predicate, Expression<Func<Order, X>> selector);
 
 
-        void AddUser(string surname, string firstName, string middleName, string phoneNumber);
-        void UpdateUser(int id, string surname, string firstName, string middleName, string phoneNumber);
+        void AddUser(User user);
+        Task AddUserAsync(User user);
+        void UpdateUser(int id, User user);
+        Task UpdateUserAsync(int id, User user);
 
         User FindUser(int id);
         User FindUser(Func<User, bool> predicate);
@@ -39,7 +45,8 @@ namespace DBZion.BLL.Interfaces
         Task<List<User>> GetUsersAsync();
         Task<List<User>> GetUsersAsync(Expression<Func<User, bool>> predicate);
 
-        List<Order> GetUserOrders(User user);
+        List<Order> GetUserOrders(int userId);
+        Task<List<Order>> GetUserOrdersAsync(int userId);
 
         int RemoveInactiveUsers();
     }

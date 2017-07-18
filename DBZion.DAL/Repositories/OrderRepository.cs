@@ -46,22 +46,22 @@ namespace DBZion.DAL.Repositories
 
         public List<Order> GetAll()
         {
-            return db.Orders.Include(c => c.User).ToList();
+            return db.Orders.Include(p => p.User).AsNoTracking().ToList();
         }
 
         public List<Order> GetAll(Func<Order, bool> predicate)
         {
-            return db.Orders.Include(p => p.User).Where(predicate).ToList();
+            return db.Orders.Include(p => p.User).AsNoTracking().Where(predicate).ToList();
         }
 
         public async Task<List<Order>> GetAllAsync()
         {
-            return await db.Orders.Include(p => p.User).ToListAsync();
+            return await db.Orders.Include(p => p.User).AsNoTracking().ToListAsync();
         }
 
         public async Task<List<Order>> GetAllAsync(Expression<Func<Order, bool>> predicate)
         {
-            return await db.Orders.Include(p => p.User).ToListAsync();
+            return await db.Orders.Include(p => p.User).AsNoTracking().Where(predicate).ToListAsync();
         }
 
         public List<X> GetPropValues<X>(Func<Order, X> selector)
