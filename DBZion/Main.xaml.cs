@@ -42,8 +42,7 @@ namespace DBZion
 
         private void buttonAdd_Click(object sender, RoutedEventArgs e)
         {
-            selectedOrderID = 0;
-            CreateReceiptWindow crw = new CreateReceiptWindow();
+            CreateReceiptWindow crw = new CreateReceiptWindow(0);
             crw.Owner = this;
             crw.Show();
         }
@@ -85,7 +84,7 @@ namespace DBZion
             var k = (DataGrid)sender;
             selectedOrderID = ((DAL.Entities.Order)k.SelectedItem).OrderId;
 
-            CreateReceiptWindow crw = new CreateReceiptWindow();
+            CreateReceiptWindow crw = new CreateReceiptWindow(selectedOrderID);
             crw.Owner = this;
             crw.Show();
         }
@@ -143,7 +142,7 @@ namespace DBZion
             var k = (DataGrid)e.OriginalSource;
             selectedOrderID = ((DBZion.DAL.Entities.Order)k.SelectedItem).OrderId;
 
-            CreateReceiptWindow crw = new CreateReceiptWindow();
+            CreateReceiptWindow crw = new CreateReceiptWindow(selectedOrderID);
             crw.Owner = this;
             crw.Show();
         }
@@ -180,7 +179,7 @@ namespace DBZion
         {
             selectedOrderID = ((DAL.Entities.Order)DataGridOrders.SelectedItem).OrderId;
 
-            CreateReceiptWindow crw = new CreateReceiptWindow();
+            CreateReceiptWindow crw = new CreateReceiptWindow(selectedOrderID);
             crw.Owner = this;
             crw.Show();
         }

@@ -27,10 +27,13 @@ namespace DBZion
         private bool isUpdating = false;
         Main main = null;
         private OrderService service = null;
+        private int selectedOrderID;
 
-        public CreateReceiptWindow()
+        public CreateReceiptWindow(int selectedOrderId)
         {
             InitializeComponent();
+            
+            selectedOrderID = selectedOrderId;
         }
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -45,39 +48,39 @@ namespace DBZion
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            main = this.Owner as Main ;
-            if (main != null)
+            service = new OrderService("DbConnection");
+            main = this.Owner as Main;
+            List<string> receiptTypes = new List<string> { "Услуги", "Тест Б/У", "Картридж" };
+            List<string> serviceTypes = service.GetFieldValues(p => p.ServiceType);
+
+            isUpdating = false;
+
+            cbReceiptType.ItemsSource = receiptTypes;
+
+            if (selectedOrderID != 0)
             {
-                service = new OrderService("DbConnection");
-                List<string> receiptTypes = new List<string> { "Услуги", "Тест Б/У", "Картридж" };
-                List<string> serviceTypes = service.GetFieldValues(p => p.ServiceType);
-                isUpdating = false;
-
-                cbReceiptType.ItemsSource = receiptTypes;
-
-                if (main.selectedOrderID != 0)
+                isUpdating = true;
+                order = service.FindOrder(selectedOrderID); //GetOrders(p => p.OrderId == main.selectedOrderID).FirstOrDefault();
+                if (order != null)
                 {
-                    isUpdating = true;
-                    order = service.FindOrder(main.selectedOrderID); //GetOrders(p => p.OrderId == main.selectedOrderID).FirstOrDefault();
-                    if (order != null)
-                    {
-                        gridOrder.DataContext = order;
-                        btnAgreement.IsEnabled = true;
-                    }
+                    gridOrder.DataContext = order;
+                    btnAgreement.IsEnabled = true;
                 }
-                else
-                {
-                    cbFullName.ItemsSource = service.GetUsers().Select(p => p.FullName).ToList();
-                    txbDate.Text = DateTime.Now.ToString();
-                    txbReceiptId.Text = GetReceiptID(service.GetOrders(k => k.IsActive == true).ToDictionary(p => p.ReceiptId)).ToString();
-                    txbWorker.Text = main.CurrentUser;
-                }
-
-                service.Dispose();
             }
+            else
+            {
+                cbFullName.ItemsSource = service.GetUsers().Select(p => p.FullName).ToList();
+                service = new OrderService("DbConnection");
+                txbDate.Text = DateTime.Now.ToString();
+                txbReceiptId.Text = GetReceiptID(service.GetOrders(k => k.IsActive == true).ToDictionary(p => p.ReceiptId)).ToString();
+                txbWorker.Text = main.CurrentUser;
+            }
+
+            service.Dispose();
+
         }
 
-        private int GetReceiptID (Dictionary<int, DAL.Entities.Order> dic)
+        private int GetReceiptID (Dictionary<int, Order> dic)
         {
             Random rnd = new Random(DateTime.Now.Millisecond);
             bool flag = true;

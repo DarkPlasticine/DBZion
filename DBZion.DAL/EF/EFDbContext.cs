@@ -16,12 +16,6 @@ namespace DBZion.DAL.EF
             Database.SetInitializer<EFDbContext>(new MyEFDbInitializer());
         }
 
-        public EFDbContext()
-            :base("DbConnection")
-        {
-
-        }
-
         public EFDbContext(string connectionString)
             : base(connectionString)
         {

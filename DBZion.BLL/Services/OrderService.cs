@@ -216,6 +216,25 @@ namespace DBZion.BLL.Services
             }
         }
 
+        public void UpdateOrder(int id, int userId)
+        {
+            try
+            {
+                Order order = db.Orders.FindById(id);
+                order.UserID = userId;
+                db.Orders.Update(order);
+                db.Save();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw new Exception("Данный заказ ранее уже был изменен. \n" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ошибка при обновлении заказа \n" + ex.Message);
+            }
+        }
+
         /// <summary>
         /// Возвращает заказ по Id.
         /// </summary>
@@ -539,7 +558,10 @@ namespace DBZion.BLL.Services
             List<User> users = db.Users.GetUsersWithOrders().Where(p => p.Orders.Count == 0).ToList();
             if (users.Count != 0)
             {
-                db.Users.DeleteRange(users);
+                foreach (User u in users)
+                {
+                    db.Users.Delete(u);
+                }
                 db.Save();
                 return users.Count;
             }

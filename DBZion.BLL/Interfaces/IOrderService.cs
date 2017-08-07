@@ -13,6 +13,7 @@ namespace DBZion.BLL.Interfaces
         Task AddOrderAsync(Order order);
         void UpdateOrder(int id, bool isActive);
         void UpdateOrder(int id, Order order);
+        void UpdateOrder(int id, int userId);
         Task UpdateOrderAsync(int id, bool isActive);
         Task UpdateOrderAsync(int id, Order order);
 

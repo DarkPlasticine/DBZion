@@ -18,7 +18,7 @@
         GlowBrush="{DynamicResource AccentColorBrush}"
         WindowStartupLocation="CenterScreen"
         Icon="zion_icon.ico" 
-        Title="ZION" MinHeight="500" MinWidth="850" Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded">
+        Title="ZION" MinHeight="500" MinWidth="850" Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded" WindowState="Maximized">
     <Grid>
         <DockPanel>
             <material:ColorZone Padding="16" material:ShadowAssist.ShadowDepth="Depth2"
@@ -65,8 +65,8 @@
                     <Button Style="{StaticResource MaterialDesignRaisedDarkButton}" x:Name="buttonEditClient" Click="buttonArchive_Click">
                         <Button.Content>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <material:PackIcon Kind="Account" VerticalAlignment="Center" Margin="0 0 8 0" Width="20" Height="20"/>
-                                <TextBlock Text="Редактирование клиентов"/>
+                                <material:PackIcon Kind="BookOpen" VerticalAlignment="Center" Margin="0 0 8 0" Width="20" Height="20"/>
+                                <TextBlock Text="Просмотр заказов"/>
                             </StackPanel>
                         </Button.Content>
                     </Button>
@@ -125,7 +125,6 @@
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
-                    <material:MaterialDataGridTextColumn Binding="{Binding OrderId}" Header="ID" Visibility="Hidden" x:Name="orderID"/>
                     <material:MaterialDataGridTextColumn Binding="{Binding ReceiptId}" Header="№" />
                     <material:MaterialDataGridTextColumn Binding="{Binding ServiceType}" Header="Вид обслуживания"/>
                     <material:MaterialDataGridTextColumn Binding="{Binding Price}" Header="Сумма" />
@@ -135,7 +134,6 @@
                     <material:MaterialDataGridTextColumn Binding="{Binding Description}" Header="Описание" >
                         <material:MaterialDataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
-                                <Setter Property="TextWrapping" Value="NoWrap"/>
                                 <Setter Property="MaxHeight" Value="18"/>
                             </Style>
                         </material:MaterialDataGridTextColumn.ElementStyle>
@@ -143,7 +141,6 @@
                     <material:MaterialDataGridTextColumn Binding="{Binding Note}" Header="Комментарии" >
                         <material:MaterialDataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
-                                <Setter Property="TextWrapping" Value="NoWrap"/>
                                 <Setter Property="MaxHeight" Value="18"/>
                             </Style>
                         </material:MaterialDataGridTextColumn.ElementStyle>

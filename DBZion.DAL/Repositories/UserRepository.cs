@@ -41,12 +41,12 @@ namespace DBZion.DAL.Repositories
 
         public User Find(int id)
         {
-            return db.Users.Find(id);
+            return db.Users.Include(p => p.Orders).FirstOrDefault(p => p.UserID == id);
         }
 
         public async Task<User> FindAsync(int id)
         {
-            return await db.Users.FindAsync(id);
+            return await db.Users.Include(p => p.Orders).FirstOrDefaultAsync(p => p.UserID == id);
         }
 
         public List<User> GetAll()
@@ -92,7 +92,7 @@ namespace DBZion.DAL.Repositories
 
         public List<User> GetUsersWithOrders()
         {
-            return db.Users.Include(p => p.Orders).AsNoTracking().ToList();
+            return db.Users.Include(p => p.Orders).ToList();
         }
 
         public List<X> GetPropValues<X>(Func<User, X> selector)

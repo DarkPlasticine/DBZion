@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:DBZion"
         mc:Ignorable="d"
         
-         xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:mask="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:material="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -17,43 +18,96 @@
         GlowBrush="{DynamicResource AccentColorBrush}"
         WindowStartupLocation="CenterScreen"
         Icon="zion_icon.ico" 
-        
-        Title="Архив" MinHeight="500" MinWidth="850" Loaded="MetroWindow_Loaded">
-    <Grid>
+        Title="Квитанции клиентов" MinHeight="500" MinWidth="850" Loaded="MetroWindow_Loaded">
+    <Grid x:Name="gridUsers">
         <DockPanel>
-            <material:Card DockPanel.Dock="Left" Background="{DynamicResource MaterialDesignBackground}" VerticalAlignment="Stretch">
-                <Expander ExpandDirection="Left" IsExpanded="True" >
-                    <Expander.Header>
-                        <TextBlock Text="Дата" RenderTransformOrigin=".5,.5">
-                            <TextBlock.LayoutTransform>
-                                <RotateTransform Angle="90" />
-                            </TextBlock.LayoutTransform>
-                        </TextBlock>
-                    </Expander.Header>
-                    <ListBox x:Name="userList" Width="150" ItemsSource="{Binding}" PreviewMouseLeftButtonDown="userList_PreviewMouseLeftButtonDown">
+            <material:Card DockPanel.Dock="Left" Background="{DynamicResource MaterialDesignBackground}" VerticalAlignment="Stretch" Padding="2" Margin="2">
+                <DockPanel>
+                    
+                    <Grid DockPanel.Dock="Top" MaxWidth="250">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Style="{DynamicResource MaterialDesignToolButton}" x:Name="buttonSearch" >
+                            <material:PackIcon Kind="Magnify" Opacity=".56" />
+                        </Button>
+                        <TextBox Grid.Column="1" Margin="8 0 0 0" material:HintAssist.Hint="Поиск" 
+                                     material:TextFieldAssist.DecorationVisibility="Hidden" BorderThickness="0"
+                                     MinWidth="20" VerticalAlignment="Center" x:Name="txbSearch"
+                                     TextChanged="txbSearch_TextChanged"/>
+                        <Button Style="{DynamicResource MaterialDesignToolButton}" Grid.Column="2" x:Name="btnClear" Click="btnClear_Click">
+                            <material:PackIcon Kind="Close" Opacity=".56" Margin="8 0 0 0" />
+                        </Button>
+                    </Grid>
+                    <Separator DockPanel.Dock="Top"/>
+                    <Button DockPanel.Dock="Bottom" Margin="8" Content="Отменить" x:Name="btnCancelUnion" Visibility="Collapsed" Click="btnCancelUnion_Click"/>
+                    <Button DockPanel.Dock="Bottom" Margin="8" Content="Объединить" x:Name="btnUnion" Visibility="Collapsed" Click="btnUnion_Click"/>
+                    <Separator DockPanel.Dock="Bottom" x:Name="separetorUnion" Visibility="Collapsed"/>
+                    <ListBox x:Name="userList" Width="250" ItemsSource="{Binding}" PreviewMouseLeftButtonDown="userList_PreviewMouseLeftButtonDown" SelectionChanged="userList_SelectionChanged" PreviewMouseRightButtonDown="userList_PreviewMouseRightButtonDown"
+                             >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Visibility="Hidden" x:Name="userId" Text="{Binding Path=UserID}"></TextBlock>
-                                    <TextBlock Text="{Binding Path = FullName}"></TextBlock>
+                                    <TextBlock x:Name="userFullName" Text="{Binding Path = FullName}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Объединить" Click="MenuItem_Click">
+                
+                                </MenuItem>
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
                     </ListBox>
-                </Expander>
+                    
+                </DockPanel>
             </material:Card>
-            <DataGrid ItemsSource="{Binding}" CanUserSortColumns="True" CanUserAddRows="False"
+            <StackPanel DockPanel.Dock="Top" x:Name="userInfo" DataContext="{Binding}">
+                <DockPanel Margin="8 0 8 8">
+                    <material:PackIcon DockPanel.Dock="Left" Kind="AccountCardDetails" Width="20" Height="20" Foreground="{Binding ElementName=txbFullName, Path=BorderBrush}" 
+                                       HorizontalAlignment="Center" Margin="0 15 8 0"/>
+                    <TextBox DockPanel.Dock="Left" material:HintAssist.Hint="ФИО" MinWidth="250" 
+                             Style="{StaticResource MaterialDesignFloatingHintTextBox}" x:Name="txbFullName" Margin="0 0 20 0" Text="{Binding Path=FullName, Mode=OneWay}"/>
+                    <material:PackIcon DockPanel.Dock="Left"  Kind="PhoneInTalk" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 8 8 0"
+                                           Foreground="{Binding ElementName=txbPhone, Path=BorderBrush}"/>
+                    <mask:MaskedTextBox DockPanel.Dock="Left"  Mask="8(###)###-####" Style="{StaticResource MaterialDesignFloatingHintTextBox}" HorizontalAlignment="Center"
+                                material:HintAssist.Hint="Телефон" material:TransitionAssist.DisableTransitions="True" TextAlignment="Center" x:Name="txbPhone" Text="{Binding Path=PhoneNumber}"/>
+                    <Button x:Name="btnApply" Content="Сохранить" Margin="24 0 0 0" Click="btnApply_Click" MaxWidth="150"/>
+                    
+                </DockPanel>
+                <Separator DockPanel.Dock="Bottom" Margin="0 8 0 0"/>
+            </StackPanel>
+                <DataGrid ItemsSource="{Binding}" CanUserSortColumns="True" CanUserAddRows="False"
                       AutoGenerateColumns="False" material:DataGridAssist.CellPadding="13 8 8 8"
-                      material:DataGridAssist.ColumnHeaderPadding="8">
+                      material:DataGridAssist.ColumnHeaderPadding="8" x:Name="dataGridOrders" 
+                      IsReadOnly="True" SelectionUnit="FullRow">
                 <DataGrid.Columns>
-                    <material:MaterialDataGridTextColumn Binding="{Binding Number}" Header="№" />
-                    <material:MaterialDataGridTextColumn Binding="{Binding Vid}" Header="Вид обслуживания"/>
-                    <material:MaterialDataGridTextColumn Binding="{Binding Summ}" Header="Сумма" />
-                    <material:MaterialDataGridTextColumn Binding="{Binding FullName}" Header="ФИО" />
-                    <material:MaterialDataGridTextColumn Binding="{Binding Date, StringFormat=\{0:dd.MM.yy HH:mm:ss\}}" Header="Дата" />
-                    <material:MaterialDataGridTextColumn Binding="{Binding Phone, StringFormat={}{0:8(###)###-####}}" Header="Телефон" />
-                    <material:MaterialDataGridTextColumn Binding="{Binding Description}" Header="Описание" />
-                    <material:MaterialDataGridTextColumn Binding="{Binding Comment}" Header="Комментарии" />
+                    <material:MaterialDataGridTextColumn Binding="{Binding OrderId}" Header="ID" Visibility="Hidden" x:Name="orderID"/>
+                    <material:MaterialDataGridTextColumn Binding="{Binding ReceiptId}" Header="№" />
+                    <material:MaterialDataGridTextColumn Binding="{Binding ServiceType}" Header="Вид обслуживания"/>
+                    <material:MaterialDataGridTextColumn Binding="{Binding Price}" Header="Сумма" />
+                    <material:MaterialDataGridTextColumn Binding="{Binding Worker}" Header="Принял" />
+                    <material:MaterialDataGridTextColumn Binding="{Binding OrderDate, StringFormat=\{0:dd.MM.yy\}}" Header="Дата" />
+                    <material:MaterialDataGridTextColumn Binding="{Binding User.PhoneNumber}" Header="Телефон"/>
+                    <material:MaterialDataGridTextColumn Binding="{Binding Description}" Header="Описание" >
+                        <material:MaterialDataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="MaxHeight" Value="18"/>
+                            </Style>
+                        </material:MaterialDataGridTextColumn.ElementStyle>
+                    </material:MaterialDataGridTextColumn>
+                    <material:MaterialDataGridTextColumn Binding="{Binding Note}" Header="Комментарии" >
+                        <material:MaterialDataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="MaxHeight" Value="18"/>
+                            </Style>
+                        </material:MaterialDataGridTextColumn.ElementStyle>
+                    </material:MaterialDataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>

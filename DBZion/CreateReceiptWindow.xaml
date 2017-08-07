@@ -21,7 +21,7 @@
         WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow"
         ResizeMode="CanResizeWithGrip" Closing="MetroWindow_Closing" Loaded="MetroWindow_Loaded" >
     <Grid x:Name="gridOrder">
-        <!--<material:DialogHost Name="PopupAddCustom" HorizontalAlignment="Center" VerticalAlignment="Center" IsOpen="False" >
+        <material:DialogHost Name="PopupAddCustom" HorizontalAlignment="Center" VerticalAlignment="Center" IsOpen="False" >
             <material:DialogHost.DialogContent>
                 <StackPanel Margin="16" Orientation="Vertical">
                     <Label Content="Add custom date" FontSize="16" />
@@ -32,7 +32,7 @@
                     </StackPanel>
                 </StackPanel>
             </material:DialogHost.DialogContent>
-        </material:DialogHost>-->
+        </material:DialogHost>
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 8">
                 <TextBox x:Name="txbReceiptId" Margin="0 0 16 0" Width="25" Text="{Binding Path=ReceiptId, Mode=OneWay}" 

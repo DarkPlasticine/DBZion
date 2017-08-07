@@ -19,7 +19,7 @@
         
         Title="Поиск квитанций" Height="490" Width="720" Icon="zion_icon.ico" 
         WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize" PreviewKeyDown="MetroWindow_PreviewKeyDown" >
     <Grid>
         <DockPanel>
             <StackPanel DockPanel.Dock="Top">
@@ -60,7 +60,7 @@
                       PreviewMouseDoubleClick="DataGridOrders_PreviewMouseDoubleClick" SelectionMode="Single" 
                       LoadingRow="DataGridOrders_LoadingRow" IsReadOnly="True" 
                       MouseRightButtonDown="DataGridOrders_MouseRightButtonDown"
-                      SelectionUnit="FullRow" RowHeight="25">
+                      SelectionUnit="FullRow" >
                 <DataGrid.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Восстановить" x:Name="menuRestore" Click="menuRestore_Click">
@@ -73,7 +73,6 @@
                                 <material:PackIcon Kind="Delete"/>
                             </MenuItem.Icon>
                         </MenuItem>
-
                     </ContextMenu>
                 </DataGrid.ContextMenu>
                 <DataGrid.Columns>
@@ -86,17 +85,15 @@
                     <material:MaterialDataGridTextColumn Binding="{Binding User.PhoneNumber}" Header="Телефон"/>
                     <material:MaterialDataGridTextColumn Binding="{Binding Description}" Header="Описание" >
                         <material:MaterialDataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBox">
-                                <Setter Property="TextWrapping" Value="NoWrap"></Setter>
-                                <Setter Property="MaxHeight" Value="30"></Setter>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="MaxHeight" Value="18"/>
                             </Style>
                         </material:MaterialDataGridTextColumn.ElementStyle>
                     </material:MaterialDataGridTextColumn>
                     <material:MaterialDataGridTextColumn Binding="{Binding Note}" Header="Комментарии" >
                         <material:MaterialDataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBox">
-                                <Setter Property="TextWrapping" Value="NoWrap"></Setter>
-                                <Setter Property="MaxHeight" Value="30"></Setter>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="MaxHeight" Value="18"/>
                             </Style>
                         </material:MaterialDataGridTextColumn.ElementStyle>
                     </material:MaterialDataGridTextColumn>
