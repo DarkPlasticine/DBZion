@@ -17,7 +17,7 @@
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         BorderThickness="1" 
-        Title="ImportBD" Height="300" Width="300" WindowStartupLocation="CenterScreen">
+        Title="ImportBD" Height="300" Width="300" WindowStartupLocation="CenterScreen" Closing="MetroWindow_Closing">
     <metro:MetroWindow.Resources>
         <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
             <Setter Property="Control.Margin" Value="8"/>

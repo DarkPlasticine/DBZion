@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <setting>
-  <connectionString name="Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=\\SERVER\Base\DataBaseZionNew.mdf;Integrated Security=True;Connect Timeout=30"/>
+  <connectionString name="Data Source=SERVER\SQLEXPRESS;Initial Catalog=DataBaseZion;Integrated Security=True"/>
   <programVersion version="1.0"/>
   <status name="\\Server\Base\status.txt"/>
   <contract path="\\Server\Base\1.rtf"/>
